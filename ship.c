@@ -4,11 +4,14 @@
 #include "ship.h"
 #include "list.h"
 
-void init_ship(struct ship *ship)
+void init_ship(struct ship *ship, float x, float y)
 {
-    /* TODO: DEFAULT POSITIONS*/
     ship->bullet_count = 0;
     ship->bullet_list = NULL;
+    ship->pos.x = x;
+    ship->pos.y = y;
+    ship->angle = 0;
+    ship->velocity = 0;
 }
 
 static void init_bullet(struct bullet *bullet, struct ship *ship)
