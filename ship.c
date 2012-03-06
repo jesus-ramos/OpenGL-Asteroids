@@ -38,6 +38,8 @@ void fire(struct ship *ship)
 
     if (!ship->bullet_list)
         ship->bullet_list = new_bullet;
+    else
+        list_add_tail(&new_bullet->list, &ship->bullet_list->list);
 }
 
 void draw_ship(struct ship *ship)
