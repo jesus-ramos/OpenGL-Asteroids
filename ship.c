@@ -1,3 +1,9 @@
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif /* __APPLE__ */
+
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -48,7 +54,18 @@ void fire(struct ship *ship)
 void draw_ship(struct ship *ship)
 {
     struct bullet *tmp;
-    /* Draw ship itself */
+
+    /* Ship inside */
+    glColor3f(0.0, 0.0, 0.0);
+    glBegin(GL_TRIANGLES);
+    /* TODO */
+    glEnd();
+
+    /* Ship outline */
+    glColor3f(1.0, 1.0, 1.0);
+    glBegin(GL_LINES);
+    /* TODO */
+    glEnd();
 
     if (!ship->bullet_list)
         return;
