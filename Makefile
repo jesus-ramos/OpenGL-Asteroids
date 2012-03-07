@@ -3,7 +3,7 @@ CC 	= gcc
 CFLAGS	= -Wall
 LD	= $(CC)
 ifeq ($(UNAME),Darwin)
-LDLIBS 	= -framework GLUT -framework OpenGL -lobjc
+LDLIBS 	= -framework GLUT -framework OpenGL -lobjc -lm
 LDFLAGS =
 else
 LDLIBS 	= -lglut -lGL -lGLU -lX11 -lXmu -lXi -lm

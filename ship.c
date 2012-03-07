@@ -8,8 +8,8 @@ void init_ship(struct ship *ship, float x, float y)
 {
     ship->bullet_count = 0;
     ship->bullet_list = NULL;
-    ship->pos.x = x;
-    ship->pos.y = y;
+    ship->pos.coords.x = x;
+    ship->pos.coords.y = y;
     ship->pos.angle = 0;
     ship->pos.velocity = 0;
 }
