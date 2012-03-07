@@ -50,6 +50,9 @@ void draw_ship(struct ship *ship)
     struct bullet *tmp;
     /* Draw ship itself */
 
+    if (!ship->bullet_list)
+        return;
+    
     list_for_each_entry(tmp, &ship->bullet_list->list, list)
     {
         /* DRAW */
