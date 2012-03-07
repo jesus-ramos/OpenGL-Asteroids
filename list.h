@@ -61,7 +61,7 @@ static inline void init_list_head(struct list_head *list)
 #define list_for_each_entry(pos, head, member)                          \
     for (pos = list_entry((head)->next, typeof(*pos), member);          \
          &pos->member != (head);                                        \
-         pos = list_entry(pos->member.next, typeof(*pos), member))      \
-    
+         pos = list_entry(pos->member.next, typeof(*pos), member))
+
 
 #endif /* _LIST_H */
