@@ -1,5 +1,5 @@
-#ifndef SHIP_H
-#define SHIP_H
+#ifndef _SHIP_H
+#define _SHIP_H
 
 #include "physics.h"
 #include "list.h"
@@ -28,7 +28,7 @@ struct ship
 
 void draw_ship(struct ship *ship);
 
-void init_ship(struct ship *ship);
+void init_ship(struct ship *ship, float x, float y);
 void fire(struct ship *ship);
 
-#endif /* SHIP_H */
+#endif /* _SHIP_H */

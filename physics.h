@@ -1,5 +1,5 @@
-#ifndef PHYSICS_H
-#define PHYSICS_H
+#ifndef _PHYSICS_H
+#define _PHYSICS_H
 
 struct position_info
 {
@@ -10,4 +10,4 @@ struct position_info
 
 void update_position(struct position_info *pos, int elapsed_time);
 
-#endif /* PHYSICS_H */
+#endif /* _PHYSICS_H */

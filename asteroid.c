@@ -3,7 +3,13 @@
 
 void draw_asteroids(struct asteroid *asteroids)
 {
+    struct asteroid *tmp;
+    
     if (!asteroids)
         return;
-    /* Walk the asteroid list and draw each one */
+
+    list_for_each_entry(tmp, &asteroids->list, list)
+    {
+        /* DRAW */
+    }
 }

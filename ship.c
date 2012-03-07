@@ -10,8 +10,8 @@ void init_ship(struct ship *ship, float x, float y)
     ship->bullet_list = NULL;
     ship->pos.x = x;
     ship->pos.y = y;
-    ship->angle = 0;
-    ship->velocity = 0;
+    ship->pos.angle = 0;
+    ship->pos.velocity = 0;
 }
 
 static void init_bullet(struct bullet *bullet, struct ship *ship)
@@ -47,7 +47,11 @@ void fire(struct ship *ship)
 
 void draw_ship(struct ship *ship)
 {
+    struct bullet *tmp;
     /* Draw ship itself */
 
-    /* Walk bullet_list and draw bullets too */
+    list_for_each_entry(tmp, &ship->bullet_list->list, list)
+    {
+        /* DRAW */
+    }
 }

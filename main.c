@@ -4,11 +4,15 @@
 #include <GL/glut.h>
 #endif /* __APPLE__ */
 
+#include "ship.h"
+#include "asteroid.h"
+#include "list.h"
+
 #define WIN_H 1024
 #define WIN_W 1024
 
 struct ship ship;
-struct asteroids *asteroids;
+struct asteroid *asteroids;
 
 void handle_keyboard_special(int key, int x, int y)
 {
@@ -35,6 +39,11 @@ void display()
     glFlush();
 }
 
+void init_game_objects()
+{
+    init_ship(&ship, WIN_W / 2, WIN_H / 2);
+}
+
 int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
@@ -45,6 +54,8 @@ int main(int argc, char **argv)
     glutDisplayFunc(display);
     glutSpecialFunc(handle_keyboard_special);
 
+    init_game_objects();
+    
     glutMainLoop();
 
     return 0;

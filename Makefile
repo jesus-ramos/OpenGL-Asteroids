@@ -12,7 +12,7 @@ endif
 RM	= rm
 
 TARGET 	= Asteroids
-SRCS 	= main.c ship.c
+SRCS 	= main.c ship.c asteroid.c
 HEADERS = ship.h asteroid.h physics.h list.h
 OBJS	= ${SRCS:.c=.o}
 

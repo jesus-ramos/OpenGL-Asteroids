@@ -1,5 +1,8 @@
-#ifndef ASTEROID_H
-#define ASTEROID_H
+#ifndef _ASTEROID_H
+#define _ASTEROID_H
+
+#include "list.h"
+#include "physics.h"
 
 struct asteroid
 {
@@ -10,4 +13,4 @@ struct asteroid
 
 void draw_asteroids(struct asteroid *asteroids);
 
-#endif /* ASTEROID_H */
+#endif /* _ASTEROID_H */
