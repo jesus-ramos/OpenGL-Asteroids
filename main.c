@@ -19,10 +19,20 @@
 
 #define MAX_BGND_STARS 500
 
+/* Drawable Objects */
 struct ship ship;
 struct asteroid *asteroids;
-
 struct vector2d star_coords[500];
+
+/* Game state */
+unsigned int score;
+unsigned int lives;
+
+void init_game_values()
+{
+    score = 0;
+    lives = 3;
+}
 
 void draw_string(float x, float y, void *font, char *string)
 {
@@ -98,6 +108,19 @@ void world_tick(int value)
     glutTimerFunc(TIMER_TICK, world_tick, 0);
 }
 
+void handle_keyboard(unsigned char key, int x, int y)
+{
+    switch (key)
+    {
+        case 'r':
+            init_game_objects();
+            init_game_values();
+            break;
+    }
+
+    glutPostRedisplay();
+}
+
 int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
@@ -106,6 +129,7 @@ int main(int argc, char **argv)
     glutCreateWindow("Asteroids");
 
     glutDisplayFunc(display);
+    glutKeyboardFunc(handle_keyboard);
     glutSpecialFunc(handle_keyboard_special);
     glutTimerFunc(0, world_tick, 0);
 
@@ -115,6 +139,7 @@ int main(int argc, char **argv)
     glMatrixMode(GL_MODELVIEW);
 
     init_game_objects();
+    init_game_values();
     
     glutMainLoop();
 

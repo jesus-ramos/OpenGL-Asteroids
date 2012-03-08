@@ -58,13 +58,20 @@ void draw_ship(struct ship *ship)
     /* Ship inside */
     glColor3f(0.0, 0.0, 0.0);
     glBegin(GL_TRIANGLES);
-    /* TODO */
+    glVertex2f(ship->pos.coords.x, ship->pos.coords.y + SHIP_HEIGHT);
+    glVertex2f(ship->pos.coords.x + SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT);
+    glVertex2f(ship->pos.coords.x - SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT);
     glEnd();
 
     /* Ship outline */
     glColor3f(1.0, 1.0, 1.0);
     glBegin(GL_LINES);
-    /* TODO */
+    glVertex2f(ship->pos.coords.x, ship->pos.coords.y + SHIP_WIDTH);
+    glVertex2f(ship->pos.coords.x + SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT);
+    glVertex2f(ship->pos.coords.x + SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT);
+    glVertex2f(ship->pos.coords.x - SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT);
+    glVertex2f(ship->pos.coords.x - SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT);
+    glVertex2f(ship->pos.coords.x, ship->pos.coords.y + SHIP_HEIGHT);
     glEnd();
 
     if (!ship->bullet_list)

@@ -7,6 +7,9 @@
 #define MAX_BULLET_COUNT 5
 #define MAX_SPEED 5 /* world units / sec */
 
+#define SHIP_HEIGHT 15
+#define SHIP_WIDTH 10
+
 #define TURNING_LEFT -1
 #define NO_TURNING 0
 #define TURNING_RIGHT 1
