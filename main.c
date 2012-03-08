@@ -24,6 +24,15 @@ struct asteroid *asteroids;
 
 struct vector2d star_coords[500];
 
+void draw_string(float x, float y, void *font, char *string)
+{
+    char *c;
+    
+    glRasterPos2f(x, y);
+    for (c = string; *c; c++)
+        glutBitmapCharacter(font, *c);
+}
+
 void draw_stars()
 {
     int i;
