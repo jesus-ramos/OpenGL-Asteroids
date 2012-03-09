@@ -43,6 +43,15 @@ void draw_string(float x, float y, void *font, char *string)
         glutBitmapCharacter(font, *c);
 }
 
+void draw_score()
+{
+    char buf[64];
+
+    snprintf(buf, 64, "Score: %d", score);
+    draw_string(WIN_W - WIN_W / 7, WIN_H - WIN_H / 15,
+                GLUT_BITMAP_HELVETICA_18, buf);
+}
+
 void draw_stars()
 {
     int i;
@@ -90,6 +99,7 @@ void display()
     draw_stars();
     draw_ship(&ship);
     draw_asteroids(asteroids);
+    draw_score();
 
     glFlush();
 }
