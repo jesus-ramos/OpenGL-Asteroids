@@ -54,24 +54,29 @@ void fire(struct ship *ship)
 void draw_ship(struct ship *ship)
 {
     struct bullet *tmp;
+    struct vector2d ship_coords[] =
+    {
+        {ship->pos.coords.x, ship->pos.coords.y + SHIP_HEIGHT},
+        {ship->pos.coords.x + SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT},
+        {ship->pos.coords.x - SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT}
+    };
+    int i;
 
     /* Ship inside */
     glColor3f(0.0, 0.0, 0.0);
     glBegin(GL_TRIANGLES);
-    glVertex2f(ship->pos.coords.x, ship->pos.coords.y + SHIP_HEIGHT);
-    glVertex2f(ship->pos.coords.x + SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT);
-    glVertex2f(ship->pos.coords.x - SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT);
+    for (i = 0; i < 3; i++)
+        glVertex2f(ship_coords[i].x, ship_coords[i].y);
     glEnd();
 
     /* Ship outline */
     glColor3f(1.0, 1.0, 1.0);
     glBegin(GL_LINES);
-    glVertex2f(ship->pos.coords.x, ship->pos.coords.y + SHIP_WIDTH);
-    glVertex2f(ship->pos.coords.x + SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT);
-    glVertex2f(ship->pos.coords.x + SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT);
-    glVertex2f(ship->pos.coords.x - SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT);
-    glVertex2f(ship->pos.coords.x - SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT);
-    glVertex2f(ship->pos.coords.x, ship->pos.coords.y + SHIP_HEIGHT);
+    for (i = 0; i < 3; i++)
+    {
+        glVertex2f(ship_coords[i].x, ship_coords[i].y);
+        glVertex2f(ship_coords[(i + 1) % 3].x, ship_coords[(i + 1) % 3].y);
+    }
     glEnd();
 
     if (!ship->bullet_list)
