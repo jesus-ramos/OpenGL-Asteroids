@@ -45,9 +45,9 @@ void draw_string(float x, float y, void *font, char *string)
 
 void draw_score()
 {
-    char buf[64];
+    char buf[16];
 
-    snprintf(buf, 64, "Score: %d", score);
+    snprintf(buf, 16, "Score: %d", score);
     draw_string(WIN_W - WIN_W / 7, WIN_H - WIN_H / 15,
                 GLUT_BITMAP_HELVETICA_18, buf);
 }
