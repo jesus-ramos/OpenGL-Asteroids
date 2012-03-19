@@ -38,4 +38,4 @@ TAGS : $(SRCS) $(HEADERS)
 
 .PHONY : clean
 clean :
-	-$(RM) $(TARGET) $(OBJS) .depend
+	-$(RM) $(TARGET) $(OBJS)
