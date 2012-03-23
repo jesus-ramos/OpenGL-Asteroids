@@ -15,13 +15,11 @@ struct position_info
 {
     struct vector2d coords;
     float angle; /* radians */
-    float velocity; /* World units / second */
+    float velocity;
 };
 
-static inline void update_position(struct position_info *pos, float elapsed_time)
+static inline void update_position(struct position_info *pos, float dist)
 {
-    float dist = pos->velocity * elapsed_time;
-
     pos->coords.x += dist * sinf(pos->angle);
     pos->coords.y += dist * cosf(pos->angle);
 }
