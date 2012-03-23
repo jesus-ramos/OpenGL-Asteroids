@@ -15,7 +15,7 @@
 #define WIN_H 1024
 #define WIN_W 1024
 
-#define TIMER_TICK 17 /* ms per tick */
+#define TIMER_TICK 20 /* ms per tick */
 
 #define MAX_BGND_STARS 500
 
@@ -65,7 +65,11 @@ void draw_stars()
 
 void handle_keyboard_special(int key, int x, int y)
 {
-    
+    if (key == GLUT_KEY_LEFT || key == GLUT_KEY_RIGHT)
+    {
+        int turn_val = (key == GLUT_KEY_LEFT) ? TURNING_LEFT : TURNING_RIGHT;
+        rotate_ship(&ship, turn_val);
+    }
 }
 
 void init_stars()
@@ -122,10 +126,9 @@ void handle_keyboard(unsigned char key, int x, int y)
 {
     switch (key)
     {
-        case 'r':
+        case 'r': /* RESET */
             init_game_objects();
             init_game_values();
-            break;
     }
 
     glutPostRedisplay();
@@ -145,7 +148,7 @@ int main(int argc, char **argv)
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0, WIN_W, 0.0, WIN_H, -WIN_W, WIN_W);
+    glOrtho(0.0, WIN_W, 0.0, WIN_H, 0, 1);
     glMatrixMode(GL_MODELVIEW);
 
     init_game_objects();

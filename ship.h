@@ -10,6 +10,8 @@
 #define SHIP_HEIGHT 15
 #define SHIP_WIDTH 10
 
+#define SHIP_ROTATE_SPEED 15 /* degrees */
+
 #define TURNING_LEFT -1
 #define NO_TURNING 0
 #define TURNING_RIGHT 1
@@ -33,5 +35,6 @@ void draw_ship(struct ship *ship);
 
 void init_ship(struct ship *ship, float x, float y);
 void fire(struct ship *ship);
+void rotate_ship(struct ship *ship, int turn_val);
 
 #endif /* _SHIP_H */

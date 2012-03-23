@@ -53,6 +53,7 @@ void fire(struct ship *ship)
 
 void draw_ship(struct ship *ship)
 {
+    int i;
     struct bullet *tmp;
     struct vector2d ship_coords[] =
     {
@@ -60,8 +61,14 @@ void draw_ship(struct ship *ship)
         {ship->pos.coords.x + SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT},
         {ship->pos.coords.x - SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT}
     };
-    int i;
 
+    glMatrixMode(GL_MODELVIEW);
+    
+    glPushMatrix();
+    glTranslatef(ship->pos.coords.x, ship->pos.coords.y, 0);
+    glRotatef(RAD_TO_DEG(ship->pos.angle), 0.0, 0.0, 1.0);
+    glTranslatef(-ship->pos.coords.x, -ship->pos.coords.y, 0);
+    
     /* Ship inside */
     glColor3f(0.0, 0.0, 0.0);
     glBegin(GL_TRIANGLES);
@@ -79,6 +86,8 @@ void draw_ship(struct ship *ship)
     }
     glEnd();
 
+    glPopMatrix();
+
     if (!ship->bullet_list)
         return;
     
@@ -86,4 +95,10 @@ void draw_ship(struct ship *ship)
     {
         /* DRAW */
     }
+}
+
+void rotate_ship(struct ship *ship, int turn_val)
+{
+    int coeff = (turn_val == TURNING_LEFT) ? 1 : -1;
+    ship->pos.angle += coeff * DEG_TO_RAD(SHIP_ROTATE_SPEED);
 }
