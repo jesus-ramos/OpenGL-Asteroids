@@ -1,12 +1,6 @@
 #ifndef _LIST_H
 #define _LIST_H
 
-/*
- * List implementation based on the linked list implementation within
- * the Linux Kernel. This is a stripped down version that contains
- * only what I really needed
- */
-
 #include <stddef.h>
 
 struct list_head
@@ -48,7 +42,6 @@ static inline void init_list_head(struct list_head *list)
     list->prev = list;
 }
 
-/* Good luck understanding any code beyond this point */
 #define container_of(ptr, type, member)                         \
     ({                                                          \
         const typeof(((type *)0)->member) *__mptr = (ptr);      \
