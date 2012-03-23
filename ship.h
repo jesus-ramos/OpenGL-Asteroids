@@ -5,7 +5,7 @@
 #include "list.h"
 
 #define MAX_BULLET_COUNT 5
-#define MAX_SPEED 5 /* world units / sec */
+#define BULLET_MOVE_DIST 10
 
 #define SHIP_HEIGHT 15
 #define SHIP_WIDTH 10
@@ -36,5 +36,6 @@ void draw_ship(struct ship *ship);
 void init_ship(struct ship *ship, float x, float y);
 void fire(struct ship *ship);
 void rotate_ship(struct ship *ship, int turn_val);
+void move_bullets(struct ship *ship, float x_bound, float y_bound);
 
 #endif /* _SHIP_H */

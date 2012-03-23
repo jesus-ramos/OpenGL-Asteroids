@@ -124,6 +124,8 @@ static inline void game_init()
 
 static void world_tick(int value)
 {
+    move_bullets(&ship, WIN_W, WIN_H);
+    
     glutPostRedisplay();
     glutTimerFunc(TIMER_TICK, world_tick, 0);
 }
@@ -135,6 +137,8 @@ static void handle_keyboard(unsigned char key, int x, int y)
         case 'r':
             game_init();
             break;
+        case ' ':
+            fire(&ship);
     }
 
     glutPostRedisplay();

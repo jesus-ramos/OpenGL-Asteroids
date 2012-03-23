@@ -24,8 +24,10 @@ static void init_bullet(struct bullet *bullet, struct ship *ship)
 {
     init_list_head(&bullet->list);
 
-    /* FIXME: LOCATIONS */
-    bullet->pos = ship->pos;
+    bullet->pos.coords = ship->pos.coords;
+    bullet->pos.angle = -ship->pos.angle;
+
+    update_position(&bullet->pos, SHIP_HEIGHT);
 }
 
 void fire(struct ship *ship)
@@ -87,18 +89,38 @@ void draw_ship(struct ship *ship)
     glEnd();
 
     glPopMatrix();
-
+ 
     if (!ship->bullet_list)
         return;
-    
+
+    glBegin(GL_POINTS);
     list_for_each_entry(tmp, &ship->bullet_list->list, list)
-    {
-        /* DRAW */
-    }
+        glVertex2f(tmp->pos.coords.x, tmp->pos.coords.y);
+    glEnd();
 }
 
 void rotate_ship(struct ship *ship, int turn_val)
 {
     int coeff = (turn_val == TURNING_LEFT) ? 1 : -1;
     ship->pos.angle += coeff * DEG_TO_RAD(SHIP_ROTATE_SPEED);
+}
+
+void move_bullets(struct ship *ship, float x_bound, float y_bound)
+{
+    struct bullet *tmp;
+    struct bullet *n;
+
+    if (!ship->bullet_list)
+        return;
+
+    list_for_each_entry_safe(tmp, n, &ship->bullet_list->list, list)
+    {
+        update_position(&tmp->pos, BULLET_MOVE_DIST);
+        if (!in_bounds(tmp->pos.coords.x, tmp->pos.coords.y, 0, x_bound, 0, y_bound))
+        {
+            ship->bullet_count--;
+            list_del(&tmp->list);
+            free(tmp);
+        }
+    }
 }
