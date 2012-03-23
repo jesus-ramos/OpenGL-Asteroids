@@ -28,13 +28,13 @@ struct vector2d star_coords[500];
 unsigned int score;
 unsigned int lives;
 
-void init_game_values()
+static void init_game_values()
 {
     score = 0;
     lives = 3;
 }
 
-void draw_string(float x, float y, void *font, char *string)
+static void draw_string(float x, float y, void *font, char *string)
 {
     char *c;
     
@@ -43,7 +43,7 @@ void draw_string(float x, float y, void *font, char *string)
         glutBitmapCharacter(font, *c);
 }
 
-void draw_score()
+static void draw_score()
 {
     char buf[16];
 
@@ -52,7 +52,7 @@ void draw_score()
                 GLUT_BITMAP_HELVETICA_18, buf);
 }
 
-void draw_stars()
+static void draw_stars()
 {
     int i;
 
@@ -63,7 +63,7 @@ void draw_stars()
     glEnd();
 }
 
-void handle_keyboard_special(int key, int x, int y)
+static void handle_keyboard_special(int key, int x, int y)
 {
     if (key == GLUT_KEY_LEFT || key == GLUT_KEY_RIGHT)
     {
@@ -72,7 +72,7 @@ void handle_keyboard_special(int key, int x, int y)
     }
 }
 
-void init_stars()
+static void init_stars()
 {
     int i;
     float x, y;
@@ -86,7 +86,7 @@ void init_stars()
     }
 }
 
-void display()
+static void display()
 {
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -108,7 +108,7 @@ void display()
     glFlush();
 }
 
-void init_game_objects()
+static void init_game_objects()
 {
     srand((unsigned int)time(NULL));
     init_ship(&ship, WIN_W / 2, WIN_H / 2);
@@ -116,19 +116,25 @@ void init_game_objects()
     /* TODO: init asteroids */
 }
 
-void world_tick(int value)
+static inline void game_init()
+{
+    init_game_objects();
+    init_game_values();
+}
+
+static void world_tick(int value)
 {
     glutPostRedisplay();
     glutTimerFunc(TIMER_TICK, world_tick, 0);
 }
 
-void handle_keyboard(unsigned char key, int x, int y)
+static void handle_keyboard(unsigned char key, int x, int y)
 {
     switch (key)
     {
-        case 'r': /* RESET */
-            init_game_objects();
-            init_game_values();
+        case 'r':
+            game_init();
+            break;
     }
 
     glutPostRedisplay();
@@ -151,8 +157,7 @@ int main(int argc, char **argv)
     glOrtho(0.0, WIN_W, 0.0, WIN_H, 0, 1);
     glMatrixMode(GL_MODELVIEW);
 
-    init_game_objects();
-    init_game_values();
+    game_init();
     
     glutMainLoop();
 
