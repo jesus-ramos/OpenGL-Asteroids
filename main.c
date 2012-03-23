@@ -47,6 +47,7 @@ static void draw_score()
 {
     char buf[16];
 
+    glColor3f(1.0, 1.0, 1.0);
     snprintf(buf, 16, "Score: %d", score);
     draw_string(WIN_W - WIN_W / 7, WIN_H - WIN_H / 15,
                 GLUT_BITMAP_HELVETICA_18, buf);
@@ -144,6 +145,11 @@ static void handle_keyboard(unsigned char key, int x, int y)
     glutPostRedisplay();
 }
 
+void handle_keyboard_up(unsigned char key, int x, int y)
+{
+    
+}
+
 int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
@@ -153,6 +159,7 @@ int main(int argc, char **argv)
 
     glutDisplayFunc(display);
     glutKeyboardFunc(handle_keyboard);
+    glutKeyboardUpFunc(handle_keyboard_up);
     glutSpecialFunc(handle_keyboard_special);
     glutTimerFunc(0, world_tick, 0);
 

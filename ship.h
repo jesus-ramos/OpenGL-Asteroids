@@ -10,7 +10,7 @@
 #define SHIP_HEIGHT 15
 #define SHIP_WIDTH 10
 
-#define SHIP_ROTATE_SPEED 15 /* degrees */
+#define SHIP_ROTATE_SPEED 20 /* degrees */
 
 #define TURNING_LEFT -1
 #define NO_TURNING 0
@@ -25,7 +25,7 @@ struct bullet
 struct ship
 {
     struct position_info pos;
-    struct bullet *bullet_list;
+    struct bullet bullet_list;
     int bullet_count;
     int turning;
     int accelerating;
