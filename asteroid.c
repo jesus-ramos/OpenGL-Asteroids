@@ -13,3 +13,8 @@ void draw_asteroids(struct asteroid *asteroids)
         /* DRAW */
     }
 }
+
+void init_asteroid(struct asteroid *asteroid)
+{
+    INIT_LIST_HEAD(&asteroid->list);
+}

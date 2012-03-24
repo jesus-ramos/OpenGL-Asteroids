@@ -12,5 +12,6 @@ struct asteroid
 };
 
 void draw_asteroids(struct asteroid *asteroids);
+void init_asteroid(struct asteroid *asteroid);
 
 #endif /* _ASTEROID_H */

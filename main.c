@@ -64,15 +64,6 @@ static void draw_stars()
     glEnd();
 }
 
-static void handle_keyboard_special(int key, int x, int y)
-{
-    if (key == GLUT_KEY_LEFT || key == GLUT_KEY_RIGHT)
-    {
-        int turn_val = (key == GLUT_KEY_LEFT) ? TURNING_LEFT : TURNING_RIGHT;
-        rotate_ship(&ship, turn_val);
-    }
-}
-
 static void init_stars()
 {
     int i;
@@ -109,10 +100,17 @@ static void display()
     glFlush();
 }
 
+static void generate_asteroids()
+{
+    /* TODO: Make a bunch of Asteroids to kill */
+    init_asteroid(&asteroids);
+}
+
 static void init_game_objects()
 {
     srand((unsigned int)time(NULL));
     init_ship(&ship, WIN_W / 2, WIN_H / 2);
+    generate_asteroids();
     init_stars();
     /* TODO: init asteroids */
 }
@@ -142,20 +140,31 @@ static void handle_keyboard(unsigned char key, int x, int y)
             game_init();
             break;
         case ' ':
-            ship.is_firing = SHIP_FIRING;
+            fire(&ship);
     }
 
     glutPostRedisplay();
 }
 
-void handle_keyboard_up(unsigned char key, int x, int y)
+static void handle_keyboard_up(unsigned char key, int x, int y)
 {
-    switch (key)
+    
+}
+
+static void handle_keyboard_special_up(int key, int x, int y)
+{
+    
+}
+
+static void handle_keyboard_special(int key, int x, int y)
+{
+    if (key == GLUT_KEY_LEFT || key == GLUT_KEY_RIGHT)
     {
-        case ' ':
-            ship.is_firing = 0;
+        int turn_val = (key == GLUT_KEY_LEFT) ? TURNING_LEFT : TURNING_RIGHT;
+        rotate_ship(&ship, turn_val);
     }
 }
+
 
 int main(int argc, char **argv)
 {
@@ -168,13 +177,13 @@ int main(int argc, char **argv)
     glutKeyboardFunc(handle_keyboard);
     glutKeyboardUpFunc(handle_keyboard_up);
     glutSpecialFunc(handle_keyboard_special);
+    glutSpecialUpFunc(handle_keyboard_special_up);
     glutTimerFunc(0, world_tick, 0);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0.0, WIN_W, 0.0, WIN_H, 0, 1);
-    glMatrixMode(GL_MODELVIEW);
-
+    
     game_init();
     
     glutMainLoop();
