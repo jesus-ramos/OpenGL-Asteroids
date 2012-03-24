@@ -40,3 +40,6 @@ TAGS : $(SRCS) $(HEADERS)
 .PHONY : clean
 clean :
 	-$(RM) $(TARGET) $(OBJS)
+
+mrproper :
+	-$(RM) $(TARGET) $(OBJS) .depend TAGS

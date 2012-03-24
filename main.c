@@ -21,7 +21,7 @@
 
 /* Drawable Objects */
 struct ship ship;
-struct asteroid *asteroids;
+struct asteroid asteroids;
 struct vector2d star_coords[500];
 
 /* Game state */
@@ -103,7 +103,7 @@ static void display()
 
     draw_stars();
     draw_ship(&ship);
-    draw_asteroids(asteroids);
+    draw_asteroids(&asteroids);
     draw_score();
 
     glFlush();
