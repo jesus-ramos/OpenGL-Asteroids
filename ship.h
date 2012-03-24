@@ -12,6 +12,8 @@
 
 #define SHIP_ROTATE_SPEED 20 /* degrees */
 
+#define SHIP_FIRING 1
+
 #define TURNING_LEFT -1
 #define NO_TURNING 0
 #define TURNING_RIGHT 1
@@ -28,7 +30,8 @@ struct ship
     struct bullet bullet_list;
     int bullet_count;
     int turning;
-    int accelerating;
+    int is_accelerating;
+    int is_firing;
 };
 
 void draw_ship(struct ship *ship);

@@ -4,11 +4,11 @@
 #include <GL/glut.h>
 #endif /* __APPLE__ */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-#include "ship.h"
 #include "list.h"
+#include "ship.h"
 
 void init_ship(struct ship *ship, float x, float y)
 {
@@ -17,6 +17,7 @@ void init_ship(struct ship *ship, float x, float y)
     ship->pos.coords.y = y;
     ship->pos.angle = 0;
     ship->pos.velocity = 0;
+    ship->is_firing = 0;
 
     INIT_LIST_HEAD(&ship->bullet_list.list);
 }
@@ -92,9 +93,7 @@ void draw_ship(struct ship *ship)
     glBegin(GL_POINTS);
     glColor3f(1.0, 0.0, 0.0);
     list_for_each_entry(tmp, &ship->bullet_list.list, list)
-    {
         glVertex2f(tmp->pos.coords.x, tmp->pos.coords.y);
-    }
     glEnd();
 }
 

@@ -126,6 +126,9 @@ static inline void game_init()
 static void world_tick(int value)
 {
     move_bullets(&ship, WIN_W, WIN_H);
+
+    if (ship.is_firing)
+        fire(&ship);
     
     glutPostRedisplay();
     glutTimerFunc(TIMER_TICK, world_tick, 0);
@@ -139,7 +142,7 @@ static void handle_keyboard(unsigned char key, int x, int y)
             game_init();
             break;
         case ' ':
-            fire(&ship);
+            ship.is_firing = SHIP_FIRING;
     }
 
     glutPostRedisplay();
@@ -147,7 +150,11 @@ static void handle_keyboard(unsigned char key, int x, int y)
 
 void handle_keyboard_up(unsigned char key, int x, int y)
 {
-    
+    switch (key)
+    {
+        case ' ':
+            ship.is_firing = 0;
+    }
 }
 
 int main(int argc, char **argv)
