@@ -83,6 +83,8 @@ static void display()
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    glMatrixMode(GL_MODELVIEW);
+
     /* Flat background */
     glBegin(GL_QUADS);
     glColor3f(0.0, 0.0, 0.0);
