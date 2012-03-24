@@ -12,9 +12,6 @@
 #include "asteroid.h"
 #include "list.h"
 
-#define WIN_H 1024
-#define WIN_W 1024
-
 #define TIMER_TICK 20 /* ms per tick */
 
 #define MAX_BGND_STARS 500
@@ -27,6 +24,10 @@ struct vector2d star_coords[500];
 /* Game state */
 unsigned int score;
 unsigned int lives;
+
+/* Window measures */
+unsigned int win_h = 1024;
+unsigned int win_w = 1024;
 
 static void init_game_values()
 {
@@ -49,7 +50,7 @@ static void draw_score()
 
     glColor3f(1.0, 1.0, 1.0);
     snprintf(buf, 16, "Score: %d", score);
-    draw_string(WIN_W - WIN_W / 7, WIN_H - WIN_H / 15,
+    draw_string(win_w - win_w / 7, win_h - win_h / 15,
                 GLUT_BITMAP_HELVETICA_18, buf);
 }
 
@@ -71,8 +72,8 @@ static void init_stars()
 
     for (i = 0; i < MAX_BGND_STARS; i++)
     {
-        x = (float)(rand() % WIN_W);
-        y = (float)(rand() % WIN_H);
+        x = (float)(rand() % win_w);
+        y = (float)(rand() % win_h);
         star_coords[i].x = x;
         star_coords[i].y = y;
     }
@@ -89,9 +90,9 @@ static void display()
     glBegin(GL_QUADS);
     glColor3f(0.0, 0.0, 0.0);
     glVertex2f(0.0, 0.0);
-    glVertex2f(0.0, WIN_H);
-    glVertex2f(WIN_W, WIN_H);
-    glVertex2f(WIN_W, 0.0);
+    glVertex2f(0.0, win_h);
+    glVertex2f(win_w, win_h);
+    glVertex2f(win_w, 0.0);
     glEnd();
 
     draw_stars();
@@ -111,7 +112,7 @@ static void generate_asteroids()
 static void init_game_objects()
 {
     srand((unsigned int)time(NULL));
-    init_ship(&ship, WIN_W / 2, WIN_H / 2);
+    init_ship(&ship, win_w / 2, win_h / 2);
     generate_asteroids();
     init_stars();
     /* TODO: init asteroids */
@@ -125,7 +126,7 @@ static inline void game_init()
 
 static void world_tick(int value)
 {
-    move_bullets(&ship, WIN_W, WIN_H);
+    move_bullets(&ship, win_w, win_h);
 
     if (ship.is_firing)
         fire(&ship);
@@ -172,7 +173,7 @@ int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA);
-    glutInitWindowSize(WIN_W, WIN_H);
+    glutInitWindowSize(win_w, win_h);
     glutCreateWindow("Asteroids");
 
     glutDisplayFunc(display);
@@ -184,7 +185,7 @@ int main(int argc, char **argv)
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0, WIN_W, 0.0, WIN_H, 0, 1);
+    glOrtho(0.0, win_w, 0.0, win_h, 0, 1);
     
     game_init();
     
