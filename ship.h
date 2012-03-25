@@ -4,13 +4,13 @@
 #include "physics.h"
 #include "list.h"
 
-#define MAX_BULLET_COUNT 5
+#define MAX_BULLET_COUNT (1UL << 30)
 #define BULLET_MOVE_DIST 10
 
 #define SHIP_HEIGHT 15
 #define SHIP_WIDTH 10
 
-#define SHIP_ROTATE_SPEED 20 /* degrees */
+#define SHIP_ROTATE_SPEED 10
 
 #define SHIP_FIRING 1
 
@@ -29,9 +29,6 @@ struct ship
     struct position_info pos;
     struct bullet bullet_list;
     int bullet_count;
-    int turning;
-    int is_accelerating;
-    int is_firing;
 };
 
 void draw_ship(struct ship *ship);

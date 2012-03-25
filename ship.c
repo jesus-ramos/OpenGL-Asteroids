@@ -17,7 +17,6 @@ void init_ship(struct ship *ship, float x, float y)
     ship->pos.coords.y = y;
     ship->pos.angle = 0;
     ship->pos.velocity = 0;
-    ship->is_firing = 0;
 
     INIT_LIST_HEAD(&ship->bullet_list.list);
 }

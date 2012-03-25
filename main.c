@@ -4,6 +4,7 @@
 #include <GL/glut.h>
 #endif /* __APPLE__ */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -12,20 +13,20 @@
 #include "asteroid.h"
 #include "list.h"
 
-#define TIMER_TICK 20 /* ms per tick */
+#define TIMER_TICK 20
 
 #define MAX_BGND_STARS 500
 
-/* Drawable Objects */
 struct ship ship;
 struct asteroid asteroids;
 struct vector2d star_coords[500];
 
-/* Game state */
 unsigned int score;
 unsigned int lives;
 
-/* Window measures */
+bool key_state[256];
+bool spec_key_state[256];
+
 unsigned int win_h = 1024;
 unsigned int win_w = 1024;
 
@@ -124,50 +125,46 @@ static inline void game_init()
     init_game_values();
 }
 
+static void handle_keystates()
+{
+    if (key_state[' '])
+        fire(&ship);
+    if (spec_key_state[GLUT_KEY_LEFT])
+        rotate_ship(&ship, TURNING_LEFT);
+    if (spec_key_state[GLUT_KEY_RIGHT])
+        rotate_ship(&ship, TURNING_RIGHT);
+}
+
 static void world_tick(int value)
 {
     move_bullets(&ship, win_w, win_h);
 
-    if (ship.is_firing)
-        fire(&ship);
-    
+    handle_keystates();
+
     glutPostRedisplay();
     glutTimerFunc(TIMER_TICK, world_tick, 0);
 }
 
 static void handle_keyboard(unsigned char key, int x, int y)
 {
-    switch (key)
-    {
-        case 'r':
-            game_init();
-            break;
-        case ' ':
-            fire(&ship);
-    }
-
-    glutPostRedisplay();
+    key_state[key] = true;
 }
 
 static void handle_keyboard_up(unsigned char key, int x, int y)
 {
-    
+    key_state[key] = false;
+}
+
+
+static void handle_keyboard_special(int key, int x, int y)
+{
+    spec_key_state[key] = true;
 }
 
 static void handle_keyboard_special_up(int key, int x, int y)
 {
-    
+    spec_key_state[key] = false;
 }
-
-static void handle_keyboard_special(int key, int x, int y)
-{
-    if (key == GLUT_KEY_LEFT || key == GLUT_KEY_RIGHT)
-    {
-        int turn_val = (key == GLUT_KEY_LEFT) ? TURNING_LEFT : TURNING_RIGHT;
-        rotate_ship(&ship, turn_val);
-    }
-}
-
 
 int main(int argc, char **argv)
 {
@@ -186,6 +183,8 @@ int main(int argc, char **argv)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0.0, win_w, 0.0, win_h, 0, 1);
+
+    glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
     
     game_init();
     
