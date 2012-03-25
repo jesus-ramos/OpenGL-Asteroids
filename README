@@ -1,1 +1,11 @@
 Asteroids game written in OpenGL
+
+Dependencies:
+FreeGLUT
+OpenGL
+
+To run:
+make
+./Asteroids
+
+Works on Mac/Linux (need to test on Windows)
