@@ -12,10 +12,7 @@
 
 #define SHIP_ROTATE_SPEED 10
 
-#define SHIP_FIRING 1
-
 #define TURNING_LEFT -1
-#define NO_TURNING 0
 #define TURNING_RIGHT 1
 
 struct bullet

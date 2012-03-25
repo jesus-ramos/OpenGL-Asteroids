@@ -4,11 +4,13 @@
 #include "list.h"
 #include "physics.h"
 
+#define ASTEROID_ROTATE_SPEED 10
+
 struct asteroid
 {
     struct position_info pos;
     struct list_head list;
-    float angular_speed; /* radians */
+    float angular_speed;
 };
 
 void draw_asteroids(struct asteroid *asteroids);
