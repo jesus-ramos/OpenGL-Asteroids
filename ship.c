@@ -38,8 +38,8 @@ void fire(struct ship *ship)
 
     if (ship->fire_wait != 0)
     {
-        ship->fire_wait = (ship->fire_wait == BULLET_FIRE_WAIT) ? 0 :
-            ship->fire_wait + 1;
+        ship->fire_wait = (ship->fire_wait == BULLET_FIRE_WAIT) ?
+            0 : ship->fire_wait + 1;
         return;
     }
     
