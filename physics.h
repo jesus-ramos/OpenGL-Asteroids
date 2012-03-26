@@ -30,4 +30,20 @@ static inline int in_bounds(float x, float y, float x_low, float x_high,
     return x >= x_low && x <= x_high && y >= y_low && y <= y_high;
 }
 
+static inline float bound_float(float val, float min_val, float max_val)
+{
+    if (val < min_val)
+        return max_val - min_val - val;
+    else if (val > max_val)
+        return (max_val - val) + min_val;
+    return val;
+}
+
+static inline void bound_position(struct vector2d *coords, float min_x, float max_x,
+                                  float min_y, float max_y)
+{
+    coords->x = bound_float(coords->x, min_x, max_x);
+    coords->y = bound_float(coords->y, min_y, max_y);
+}
+
 #endif /* _PHYSICS_H */

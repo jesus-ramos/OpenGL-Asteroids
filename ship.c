@@ -4,6 +4,7 @@
 #include <GL/glut.h>
 #endif /* __APPLE__ */
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -17,6 +18,7 @@ void init_ship(struct ship *ship, float x, float y)
     ship->pos.coords.y = y;
     ship->pos.angle = 0;
     ship->pos.velocity = 0;
+    ship->fire_wait = 0;
 
     INIT_LIST_HEAD(&ship->bullet_list.list);
 }
@@ -24,7 +26,8 @@ void init_ship(struct ship *ship, float x, float y)
 static void init_bullet(struct bullet *bullet, struct ship *ship)
 {
     bullet->pos.coords = ship->pos.coords;
-    bullet->pos.angle = -ship->pos.angle;
+    bullet->pos.angle = ship->pos.angle;
+    bullet->life = 0;
 
     update_position(&bullet->pos, SHIP_HEIGHT);
 }
@@ -33,6 +36,13 @@ void fire(struct ship *ship)
 {
     struct bullet *new_bullet;
 
+    if (ship->fire_wait != 0)
+    {
+        ship->fire_wait = (ship->fire_wait == BULLET_FIRE_WAIT) ? 0 :
+            ship->fire_wait + 1;
+        return;
+    }
+    
     if (ship->bullet_count == MAX_BULLET_COUNT)
         return;
 
@@ -47,12 +57,25 @@ void fire(struct ship *ship)
     list_add_tail(&new_bullet->list, &ship->bullet_list.list);
 
     ship->bullet_count++;
+    ship->fire_wait = 1;
+}
+
+void draw_bullets(struct bullet *bullet_list)
+{
+    struct bullet *tmp;
+
+    glPointSize(BULLET_SIZE);
+    
+    glBegin(GL_POINTS);
+    glColor3f(1.0, 0.0, 0.0);
+    list_for_each_entry(tmp, &bullet_list->list, list)
+        glVertex2f(tmp->pos.coords.x, tmp->pos.coords.y);
+    glEnd();
 }
 
 void draw_ship(struct ship *ship)
 {
     int i;
-    struct bullet *tmp;
     struct vector2d ship_coords[] =
         {
             {ship->pos.coords.x, ship->pos.coords.y + SHIP_HEIGHT},
@@ -64,7 +87,7 @@ void draw_ship(struct ship *ship)
     
     glPushMatrix();
     glTranslatef(ship->pos.coords.x, ship->pos.coords.y, 0);
-    glRotatef(RAD_TO_DEG(ship->pos.angle), 0.0, 0.0, 1.0);
+    glRotatef(-RAD_TO_DEG(ship->pos.angle), 0.0, 0.0, 1.0);
     glTranslatef(-ship->pos.coords.x, -ship->pos.coords.y, 0);
     
     /* Ship inside */
@@ -86,38 +109,48 @@ void draw_ship(struct ship *ship)
 
     glPopMatrix();
  
-    if (!ship->bullet_count)
-        return;
-
-    glBegin(GL_POINTS);
-    glColor3f(1.0, 0.0, 0.0);
-    list_for_each_entry(tmp, &ship->bullet_list.list, list)
-        glVertex2f(tmp->pos.coords.x, tmp->pos.coords.y);
-    glEnd();
+    draw_bullets(&ship->bullet_list);
 }
 
 void rotate_ship(struct ship *ship, int turn_val)
 {
-    int coeff = (turn_val == TURNING_LEFT) ? 1 : -1;
-    ship->pos.angle += coeff * DEG_TO_RAD(SHIP_ROTATE_SPEED);
+    ship->pos.angle += turn_val * DEG_TO_RAD(SHIP_ROTATE_SPEED);
 }
 
-void move_bullets(struct ship *ship, float x_bound, float y_bound)
+void delete_bullet(struct ship *ship, struct bullet *bullet)
+{
+    ship->bullet_count--;
+    list_del(&bullet->list);
+    free(bullet);
+}
+
+void move_bullets(struct ship *ship)
 {
     struct bullet *tmp;
     struct bullet *n;
+    int params[4];
 
-    if (!ship->bullet_count)
-        return;
-
+    glGetIntegerv(GL_VIEWPORT, params);
+    
     list_for_each_entry_safe(tmp, n, &ship->bullet_list.list, list)
     {
-        update_position(&tmp->pos, BULLET_MOVE_DIST);
-        if (!in_bounds(tmp->pos.coords.x, tmp->pos.coords.y, 0, x_bound, 0, y_bound))
+        if (++tmp->life == BULLET_LIFETIME)
         {
-            ship->bullet_count--;
-            list_del(&tmp->list);
-            free(tmp);
+            delete_bullet(ship, tmp);
+            continue;
         }
+        update_position(&tmp->pos, BULLET_MOVE_DIST);
+        bound_position(&tmp->pos.coords, params[0], params[2], params[1], params[3]);
     }
+}
+
+void move_ship(struct ship *ship, int direction)
+{
+    int params[4];
+
+    update_position(&ship->pos, direction * SHIP_MOVE_DIST);
+
+    glGetIntegerv(GL_VIEWPORT, params);
+
+    bound_position(&ship->pos.coords, params[0], params[2], params[1], params[3]);
 }

@@ -59,6 +59,8 @@ static void draw_stars()
 {
     int i;
 
+    glPointSize(1.0);
+    
     glBegin(GL_POINTS);
     glColor3f(1.0, 1.0, 1.0);
     for (i = 0; i < MAX_BGND_STARS; i++)
@@ -66,7 +68,7 @@ static void draw_stars()
     glEnd();
 }
 
-static void init_stars()
+static void generate_stars()
 {
     int i;
     float x, y;
@@ -115,8 +117,7 @@ static void init_game_objects()
     srand((unsigned int)time(NULL));
     init_ship(&ship, win_w / 2, win_h / 2);
     generate_asteroids();
-    init_stars();
-    /* TODO: init asteroids */
+    generate_stars();
 }
 
 static inline void game_init()
@@ -129,15 +130,20 @@ static void handle_keystates()
 {
     if (key_state[' '])
         fire(&ship);
-    if (spec_key_state[GLUT_KEY_LEFT])
-        rotate_ship(&ship, TURNING_LEFT);
-    if (spec_key_state[GLUT_KEY_RIGHT])
-        rotate_ship(&ship, TURNING_RIGHT);
+    if (key_state['r'])
+        game_init();
+    
+    if (spec_key_state[GLUT_KEY_LEFT] ^ spec_key_state[GLUT_KEY_RIGHT])
+        rotate_ship(&ship, (spec_key_state[GLUT_KEY_LEFT]) ?
+                    TURNING_LEFT: TURNING_RIGHT);
+    if (spec_key_state[GLUT_KEY_UP] ^ spec_key_state[GLUT_KEY_DOWN])
+        move_ship(&ship, (spec_key_state[GLUT_KEY_UP]) ?
+                  MOVING_FORWARD : MOVING_BACKWARD);
 }
 
 static void world_tick(int value)
 {
-    move_bullets(&ship, win_w, win_h);
+    move_bullets(&ship);
 
     handle_keystates();
 
@@ -183,6 +189,7 @@ int main(int argc, char **argv)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0.0, win_w, 0.0, win_h, 0, 1);
+    glViewport(0, 0, win_w, win_h);
 
     glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
     
