@@ -11,7 +11,7 @@
 
 #define BULLET_SIZE 1.5
 
-#define SHIP_MOVE_DIST 7
+#define SHIP_MOVE_DIST 6
 
 #define SHIP_HEIGHT 15
 #define SHIP_WIDTH 10

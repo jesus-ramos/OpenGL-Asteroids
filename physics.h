@@ -24,12 +24,6 @@ static inline void update_position(struct position_info *pos, float dist)
     pos->coords.y += dist * cosf(pos->angle);
 }
 
-static inline int in_bounds(float x, float y, float x_low, float x_high,
-                            float y_low, float y_high)
-{
-    return x >= x_low && x <= x_high && y >= y_low && y <= y_high;
-}
-
 static inline float bound_float(float val, float min_val, float max_val)
 {
     if (val < min_val)
