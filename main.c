@@ -25,7 +25,7 @@ unsigned int score;
 unsigned int lives;
 
 bool key_state[256];
-bool spec_key_state[256];
+bool spec_key_state[128];
 
 unsigned int win_h = 1024;
 unsigned int win_w = 1024;
