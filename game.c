@@ -15,6 +15,7 @@ struct vector2d star_coords[MAX_BGND_STARS];
 
 unsigned int score;
 unsigned int lives;
+unsigned int level;
 
 static void draw_string(float x, float y, void *font, char *string)
 {
@@ -23,6 +24,23 @@ static void draw_string(float x, float y, void *font, char *string)
     glRasterPos2f(x, y);
     for (c = string; *c; c++)
         glutBitmapCharacter(font, *c);
+}
+
+static void draw_level()
+{
+    char buf[16];
+    int params[4];
+    int win_h, win_w;
+
+    glGetIntegerv(GL_VIEWPORT, params);
+
+    win_w = params[2];
+    win_h = params[3];
+
+    glColor3f(1.0, 1.0, 1.0);
+    snprintf(buf, 16, "Level %u", level);
+    draw_string(win_w / 20, win_h - win_h / 15,
+                GLUT_BITMAP_HELVETICA_18, buf);
 }
 
 static void draw_score()
@@ -87,7 +105,6 @@ void display()
     win_h = params[3];
     win_w = params[2];
     
-    /* Flat background */
     glBegin(GL_QUADS);
     glColor3f(0.0, 0.0, 0.0);
     glVertex2f(0.0, 0.0);
@@ -100,6 +117,7 @@ void display()
     draw_ship(&ship);
     draw_asteroids(&asteroids);
     draw_score();
+    draw_level();
 
     glFlush();
 }
@@ -114,6 +132,7 @@ static void init_game_values()
 {
     score = 0;
     lives = MAX_LIVES;
+    level = 1;
 }
 
 static void init_game_objects()

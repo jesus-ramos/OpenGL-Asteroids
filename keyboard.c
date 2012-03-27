@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "keyboard.h"
 #include "glwrapper.h"
 #include "game.h"
@@ -7,6 +9,8 @@ char spec_key_state[128];
 
 void handle_keystates()
 {
+    if (key_state['q'])
+        exit(EXIT_SUCCESS);
     if (key_state[' '])
         fire(&ship);
     if (key_state['r'])
