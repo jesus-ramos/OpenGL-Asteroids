@@ -12,8 +12,7 @@ endif
 RM	= rm
 
 TARGET 	= Asteroids
-SRCS 	= main.c ship.c asteroid.c
-HEADERS = ship.h asteroid.h physics.h list.h
+SRCS 	= main.c ship.c asteroid.c game.c keyboard.c
 OBJS	= ${SRCS:.c=.o}
 
 .SUFFIXES: #clear
@@ -34,7 +33,7 @@ include .depend
 $(TARGET) : $(OBJS)
 	$(LD) -o $@ $(OBJS) $(LDFLAGS) $(LDLIBS)
 
-TAGS : $(SRCS) $(HEADERS)
+TAGS :
 	find . -regex ".*\.[cChH]\(pp\)?" -print | etags -
 
 .PHONY : clean
