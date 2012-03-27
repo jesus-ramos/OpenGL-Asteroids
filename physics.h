@@ -6,6 +6,8 @@
 #define RAD_TO_DEG(rad) (rad * (180 / M_PI))
 #define DEG_TO_RAD(deg) (deg * (M_PI / 180))
 
+#define SQUARE(expr) (expr * expr)
+
 struct vector2d
 {
     float x, y;
@@ -46,6 +48,11 @@ static inline void update_and_bound_pos(struct position_info *pos, float dist,
 {
     update_position(pos, dist);
     bound_position(&pos->coords, min_x, max_x, min_y, max_y);
+}
+
+static inline float distf(struct vector2d *p1, struct vector2d *p2)
+{
+    return sqrtf(SQUARE(p2->x - p1->x) + SQUARE(p2->y - p1->y));
 }
 
 #endif /* _PHYSICS_H */
