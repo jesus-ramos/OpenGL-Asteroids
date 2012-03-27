@@ -1,13 +1,8 @@
-#ifdef __APPLE__
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif /* __APPLE__ */
-
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "glwrapper.h"
 #include "list.h"
 #include "ship.h"
 
@@ -128,9 +123,9 @@ void move_bullets(struct ship *ship)
 {
     struct bullet *tmp;
     struct bullet *n;
-    int params[4];
+    int win_h, win_w;
 
-    glGetIntegerv(GL_VIEWPORT, params);
+    GET_WINDOW_SIZE(win_w, win_h);
     
     list_for_each_entry_safe(tmp, n, &ship->bullet_list.list, list)
     {
@@ -140,16 +135,16 @@ void move_bullets(struct ship *ship)
             continue;
         }
         update_position(&tmp->pos, BULLET_MOVE_DIST);
-        bound_position(&tmp->pos.coords, params[0], params[2], params[1], params[3]);
+        bound_position(&tmp->pos.coords, 0, win_w, 0, win_h);
     }
 }
 
 void move_ship(struct ship *ship, int direction)
 {
-    int params[4];
+    int win_h, win_w;
 
-    glGetIntegerv(GL_VIEWPORT, params);
+    GET_WINDOW_SIZE(win_w, win_h);
 
     update_position(&ship->pos, direction * SHIP_MOVE_DIST);
-    bound_position(&ship->pos.coords, params[0], params[2], params[1], params[3]);
+    bound_position(&ship->pos.coords, 0, win_w, 0, win_h);
 }

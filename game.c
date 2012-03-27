@@ -29,13 +29,9 @@ static void draw_string(float x, float y, void *font, char *string)
 static void draw_level()
 {
     char buf[16];
-    int params[4];
     int win_h, win_w;
 
-    glGetIntegerv(GL_VIEWPORT, params);
-
-    win_w = params[2];
-    win_h = params[3];
+    GET_WINDOW_SIZE(win_w, win_h);
 
     glColor3f(1.0, 1.0, 1.0);
     snprintf(buf, 16, "Level %u", level);
@@ -46,13 +42,9 @@ static void draw_level()
 static void draw_score()
 {
     char buf[16];
-    int params[4];
     int win_h, win_w;
 
-    glGetIntegerv(GL_VIEWPORT, params);
-
-    win_w = params[2];
-    win_h = params[3];
+    GET_WINDOW_SIZE(win_w, win_h);
 
     glColor3f(1.0, 1.0, 1.0);
     snprintf(buf, 16, "Score: %d", score);
@@ -77,14 +69,14 @@ static void generate_stars()
 {
     int i;
     float x, y;
-    int params[4];
-
-    glGetIntegerv(GL_VIEWPORT, params);
+    int win_w, win_h;
+    
+    GET_WINDOW_SIZE(win_w, win_h);
 
     for (i = 0; i < MAX_BGND_STARS; i++)
     {
-        x = (float)(rand() % params[2]);
-        y = (float)(rand() % params[3]);
+        x = (float)(rand() % win_w);
+        y = (float)(rand() % win_h);
         star_coords[i].x = x;
         star_coords[i].y = y;
     }
@@ -92,7 +84,6 @@ static void generate_stars()
 
 void display()
 {
-    int params[4];
     int win_h, win_w;
     
     glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -100,10 +91,7 @@ void display()
 
     glMatrixMode(GL_MODELVIEW);
     
-    glGetIntegerv(GL_VIEWPORT, params);
-
-    win_h = params[3];
-    win_w = params[2];
+    GET_WINDOW_SIZE(win_w, win_h);
     
     glBegin(GL_QUADS);
     glColor3f(0.0, 0.0, 0.0);
@@ -137,12 +125,12 @@ static void init_game_values()
 
 static void init_game_objects()
 {
-    int params[4];
+    int win_w, win_h;
 
-    glGetIntegerv(GL_VIEWPORT, params);
+    GET_WINDOW_SIZE(win_w, win_h);
     
     srand((unsigned int)time(NULL));
-    init_ship(&ship, params[2] / 2, params[3] / 2);
+    init_ship(&ship, win_w / 2, win_h / 2);
     generate_asteroids();
     generate_stars();
 }
