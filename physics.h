@@ -40,4 +40,12 @@ static inline void bound_position(struct vector2d *coords, float min_x, float ma
     coords->y = bound_float(coords->y, min_y, max_y);
 }
 
+static inline void update_and_bound_pos(struct position_info *pos, float dist,
+                                        float min_x, float max_x,
+                                        float min_y, float max_y)
+{
+    update_position(pos, dist);
+    bound_position(&pos->coords, min_x, max_x, min_y, max_y);
+}
+
 #endif /* _PHYSICS_H */

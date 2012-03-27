@@ -134,8 +134,8 @@ void move_bullets(struct ship *ship)
             delete_bullet(ship, tmp);
             continue;
         }
-        update_position(&tmp->pos, BULLET_MOVE_DIST);
-        bound_position(&tmp->pos.coords, 0, win_w, 0, win_h);
+        update_and_bound_pos(&tmp->pos, BULLET_MOVE_DIST,
+                             0, win_w, 0, win_h);
     }
 }
 
@@ -145,6 +145,6 @@ void move_ship(struct ship *ship, int direction)
 
     GET_WINDOW_SIZE(win_w, win_h);
 
-    update_position(&ship->pos, direction * SHIP_MOVE_DIST);
-    bound_position(&ship->pos.coords, 0, win_w, 0, win_h);
+    update_and_bound_pos(&ship->pos, direction * SHIP_MOVE_DIST,
+                         0, win_w, 0, win_h);
 }
