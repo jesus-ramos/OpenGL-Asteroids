@@ -16,12 +16,6 @@ struct vector2d star_coords[MAX_BGND_STARS];
 unsigned int score;
 unsigned int lives;
 
-static void init_game_values()
-{
-    score = 0;
-    lives = MAX_LIVES;
-}
-
 static void draw_string(float x, float y, void *font, char *string)
 {
     char *c;
@@ -114,6 +108,12 @@ static void generate_asteroids()
 {
     /* TODO: Make a bunch of Asteroids to kill */
     init_asteroid(&asteroids);
+}
+
+static void init_game_values()
+{
+    score = 0;
+    lives = MAX_LIVES;
 }
 
 static void init_game_objects()

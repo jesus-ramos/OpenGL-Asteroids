@@ -148,9 +148,8 @@ void move_ship(struct ship *ship, int direction)
 {
     int params[4];
 
-    update_position(&ship->pos, direction * SHIP_MOVE_DIST);
-
     glGetIntegerv(GL_VIEWPORT, params);
 
+    update_position(&ship->pos, direction * SHIP_MOVE_DIST);
     bound_position(&ship->pos.coords, params[0], params[2], params[1], params[3]);
 }
