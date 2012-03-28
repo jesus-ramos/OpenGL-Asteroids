@@ -69,7 +69,7 @@ void fire(struct ship *ship)
     ship->fire_wait = 1;
 }
 
-void draw_bullets(struct bullet *bullet_list)
+static void draw_bullets(struct bullet *bullet_list)
 {
     struct bullet *tmp;
 

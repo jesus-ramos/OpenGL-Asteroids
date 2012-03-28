@@ -4,6 +4,18 @@
 #include "glwrapper.h"
 #include "game.h"
 
+#define DECL_KEYBOARD_HANDLER(name, val)         \
+    void name(unsigned char key, int x, int y)  \
+    {                                           \
+        key_state[key] = val;                   \
+    }
+
+#define DECL_SPECIAL_HANDLER(name, val)          \
+    void name(int key, int x, int y)            \
+    {                                           \
+        spec_key_state[key] = val;              \
+    }
+
 char key_state[256];
 char spec_key_state[128];
 

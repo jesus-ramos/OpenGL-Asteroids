@@ -9,6 +9,17 @@
 #include "physics.h"
 #include "ship.h"
 
+#define DECL_DRAW_VALUE_FUNC(name, fmtstring, val, x, y)        \
+    static void name()                                          \
+    {                                                           \
+        char buf[16];                                           \
+        int win_h, win_w;                                       \
+        GET_WINDOW_SIZE(win_w, win_h);                          \
+        glColor3f(1.0, 1.0, 1.0);                               \
+        snprintf(buf, 16, fmtstring, val);                      \
+        draw_string(x, y, GLUT_BITMAP_HELVETICA_18, buf);       \
+    }
+
 struct ship ship;
 struct asteroid asteroids;
 struct vector2d star_coords[MAX_BGND_STARS];
@@ -26,32 +37,11 @@ static void draw_string(float x, float y, void *font, char *string)
         glutBitmapCharacter(font, *c);
 }
 
-static void draw_level()
-{
-    char buf[16];
-    int win_h, win_w;
+DECL_DRAW_VALUE_FUNC(draw_level, "Level %u", level,
+                     win_w / 20, win_h - win_h / 15)
 
-    GET_WINDOW_SIZE(win_w, win_h);
-
-    glColor3f(1.0, 1.0, 1.0);
-    snprintf(buf, 16, "Level %u", level);
-    draw_string(win_w / 20, win_h - win_h / 15,
-                GLUT_BITMAP_HELVETICA_18, buf);
-}
-
-static void draw_score()
-{
-    char buf[16];
-    int win_h, win_w;
-
-    GET_WINDOW_SIZE(win_w, win_h);
-
-    glColor3f(1.0, 1.0, 1.0);
-    snprintf(buf, 16, "Score: %d", score);
-    draw_string(win_w - win_w / 7, win_h - win_h / 15,
-                GLUT_BITMAP_HELVETICA_18, buf);
-}
-
+DECL_DRAW_VALUE_FUNC(draw_score, "Score: %d", score,
+                     win_w - win_w / 7, win_h - win_h / 15)
 static void draw_stars()
 {
     int i;
