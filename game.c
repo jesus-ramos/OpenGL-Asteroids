@@ -9,6 +9,8 @@
 #include "physics.h"
 #include "ship.h"
 
+#define STAR_SIZE 1.0
+
 #define DECL_DRAW_VALUE_FUNC(name, fmtstring, val, x, y)        \
     static void name()                                          \
     {                                                           \
@@ -42,11 +44,12 @@ DECL_DRAW_VALUE_FUNC(draw_level, "Level %u", level,
 
 DECL_DRAW_VALUE_FUNC(draw_score, "Score: %d", score,
                      win_w - win_w / 7, win_h - win_h / 15)
+
 static void draw_stars()
 {
     int i;
 
-    glPointSize(1.0);
+    glPointSize(STAR_SIZE);
     
     glBegin(GL_POINTS);
     glColor3f(1.0, 1.0, 1.0);
@@ -82,14 +85,6 @@ void display()
     glMatrixMode(GL_MODELVIEW);
     
     GET_WINDOW_SIZE(win_w, win_h);
-    
-    glBegin(GL_QUADS);
-    glColor3f(0.0, 0.0, 0.0);
-    glVertex2f(0.0, 0.0);
-    glVertex2f(0.0, win_h);
-    glVertex2f(win_w, win_h);
-    glVertex2f(win_w, 0.0);
-    glEnd();
 
     draw_stars();
     draw_ship(&ship);

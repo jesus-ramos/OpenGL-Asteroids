@@ -45,7 +45,7 @@ void fire(struct ship *ship)
 {
     struct bullet *new_bullet;
 
-    if (ship->fire_wait != 0)
+    if (ship->fire_wait)
     {
         ship->fire_wait = (ship->fire_wait == BULLET_FIRE_WAIT) ?
             0 : ship->fire_wait + 1;
@@ -88,8 +88,8 @@ void draw_ship(struct ship *ship)
     struct vector2d ship_coords[] =
         {
             {ship->pos.coords.x, ship->pos.coords.y + SHIP_HEIGHT},
-            {ship->pos.coords.x + SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT},
-            {ship->pos.coords.x - SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT}
+            {ship->pos.coords.x - SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT},
+            {ship->pos.coords.x + SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT}
         };
 
     glMatrixMode(GL_MODELVIEW);

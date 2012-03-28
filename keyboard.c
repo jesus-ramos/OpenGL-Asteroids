@@ -4,13 +4,13 @@
 #include "glwrapper.h"
 #include "game.h"
 
-#define DECL_KEYBOARD_HANDLER(name, val)         \
+#define DECL_KEYBOARD_HANDLER(name, val)        \
     void name(unsigned char key, int x, int y)  \
     {                                           \
         key_state[key] = val;                   \
     }
 
-#define DECL_SPECIAL_HANDLER(name, val)          \
+#define DECL_SPECIAL_HANDLER(name, val)         \
     void name(int key, int x, int y)            \
     {                                           \
         spec_key_state[key] = val;              \
@@ -36,7 +36,7 @@ void handle_keystates()
                   MOVING_FORWARD : MOVING_BACKWARD);
 }
 
-DEF_KEYBOARD_HANDLER(handle_keyboard, 1)
-DEF_KEYBOARD_HANDLER(handle_keyboard_up, 0)
-DEF_SPECIAL_HANDLER(handle_keyboard_special, 1)
-DEF_SPECIAL_HANDLER(handle_keyboard_special_up, 0)
+DECL_KEYBOARD_HANDLER(handle_keyboard, 1)
+DECL_KEYBOARD_HANDLER(handle_keyboard_up, 0)
+DECL_SPECIAL_HANDLER(handle_keyboard_special, 1)
+DECL_SPECIAL_HANDLER(handle_keyboard_special_up, 0)
