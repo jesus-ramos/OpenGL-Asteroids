@@ -11,6 +11,16 @@
 
 #define STAR_SIZE 1.0
 
+#define NUM_ASTEROIDS 3
+
+#define GET_RAND_COORDS(x, y)                   \
+    do {                                        \
+        int width, height;                      \
+        GET_WINDOW_SIZE(width, height);         \
+        x = (float)(rand() % width);            \
+        y = (float)(rand() % height);           \
+    } while (0)
+
 #define DECL_DRAW_VALUE_FUNC(name, fmtstring, val, x, y)        \
     static void name()                                          \
     {                                                           \
@@ -61,31 +71,18 @@ static void draw_stars()
 static void generate_stars()
 {
     int i;
-    float x, y;
-    int win_w, win_h;
-    
-    GET_WINDOW_SIZE(win_w, win_h);
 
     for (i = 0; i < MAX_BGND_STARS; i++)
-    {
-        x = (float)(rand() % win_w);
-        y = (float)(rand() % win_h);
-        star_coords[i].x = x;
-        star_coords[i].y = y;
-    }
+        GET_RAND_COORDS(star_coords[i].x, star_coords[i].y);
 }
 
 void display()
 {
-    int win_h, win_w;
-    
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glMatrixMode(GL_MODELVIEW);
     
-    GET_WINDOW_SIZE(win_w, win_h);
-
     draw_stars();
     draw_ship(&ship);
     draw_asteroids(&asteroids);
@@ -97,8 +94,25 @@ void display()
 
 static void generate_asteroids()
 {
-    /* TODO: Make a bunch of Asteroids to kill */
-    init_asteroid(&asteroids);
+    int i;
+    float x, y;
+    struct asteroid *tmp;
+        
+    INIT_LIST_HEAD(&asteroids.list);
+    
+    for (i = 0; i < NUM_ASTEROIDS; i++)
+    {
+        tmp = malloc(sizeof(struct asteroid));
+        if (!tmp)
+        {
+            printf("OOM: asteroid\n");
+            exit(EXIT_FAILURE);
+        }
+        
+        GET_RAND_COORDS(x, y);
+        init_asteroid(tmp, x, y);
+        list_add_tail(&tmp->list, &asteroids.list);
+    }
 }
 
 static void init_game_values()

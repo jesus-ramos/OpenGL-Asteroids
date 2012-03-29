@@ -4,22 +4,37 @@
 
 #define ASTEROID_ROTATE_SPEED 10
 
-#define NUM_CIRCLE_POINTS 100
+#define NUM_CIRCLE_POINTS 1000
 
-static void draw_circle(float radius, int num_points)
+#define ASTEROID_RADIUS 100
+
+#define DRAW_CIRCLE_LOOP                                \
+    do {                                                \
+        for (i = 0; i < num_points; i++)                \
+        {                                               \
+            angle = i * (2.0 * M_PI / num_points);      \
+            x = coords->x + cosf(angle) * radius;       \
+            y = coords->y + sinf(angle) * radius;       \
+            glVertex2f(x, y);                           \
+        }                                               \
+        glVertex2f(coords->x + radius, coords->y);      \
+    } while (0)
+
+
+static void draw_circle(float radius, int num_points, struct vector2d *coords)
 {
     int i;
     float angle;
     float x, y;
+
+    glColor3f(0.0, 0.0, 0.0);
+    glBegin(GL_POLYGON);
+    DRAW_CIRCLE_LOOP;
+    glEnd();
     
+    glColor3f(1.0, 1.0, 1.0);
     glBegin(GL_LINE_STRIP);
-    for (i = 0; i < num_points; i++)
-    {
-        angle = i * (2.0 * M_PI / num_points);
-        x = cosf(angle) * radius;
-        y = sinf(angle) * radius;
-        glVertex2f(x, y);
-    }
+    DRAW_CIRCLE_LOOP;
     glEnd();
 }
 
@@ -31,12 +46,14 @@ int check_asteroid_collision(struct vector2d *coords, struct asteroid *asteroid)
 void draw_asteroids(struct asteroid *asteroids)
 {
     struct asteroid *tmp;
-    
+
     list_for_each_entry(tmp, &asteroids->list, list)
-        draw_circle(tmp->radius, NUM_CIRCLE_POINTS);
+        draw_circle(tmp->radius, NUM_CIRCLE_POINTS, &tmp->pos.coords);
 }
 
-void init_asteroid(struct asteroid *asteroid)
+void init_asteroid(struct asteroid *asteroid, float x, float y)
 {
-    INIT_LIST_HEAD(&asteroid->list);
+    asteroid->pos.coords.x = x;
+    asteroid->pos.coords.y = y;
+    asteroid->radius = ASTEROID_RADIUS;
 }

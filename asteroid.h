@@ -13,7 +13,7 @@ struct asteroid
 };
 
 void draw_asteroids(struct asteroid *asteroids);
-void init_asteroid(struct asteroid *asteroid);
+void init_asteroid(struct asteroid *asteroid, float x, float y);
 int check_asteroid_collision(struct vector2d *coords, struct asteroid *asteroid);
 
 #endif /* _ASTEROID_H */
