@@ -59,7 +59,7 @@ void fire(struct ship *ship)
     if (!new_bullet)
     {
         printf("OOM: bullet\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     init_bullet(new_bullet, ship);
 
