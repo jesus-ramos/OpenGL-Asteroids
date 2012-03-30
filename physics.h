@@ -6,7 +6,7 @@
 #define RAD_TO_DEG(rad) (rad * (180 / M_PI))
 #define DEG_TO_RAD(deg) (deg * (M_PI / 180))
 
-#define SQUARE(expr) (expr * expr)
+#define SQUARE(expr) ((expr) * (expr))
 
 struct vector2d
 {
