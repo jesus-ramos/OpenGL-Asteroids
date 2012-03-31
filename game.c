@@ -39,6 +39,7 @@ struct vector2d star_coords[MAX_BGND_STARS];
 unsigned int score;
 unsigned int lives;
 unsigned int level;
+char game_over;
 
 static void draw_string(float x, float y, void *font, char *string)
 {
@@ -49,11 +50,25 @@ static void draw_string(float x, float y, void *font, char *string)
         glutBitmapCharacter(font, *c);
 }
 
+static int get_str_width(void *font, char *str)
+{
+    char *i = str;
+    int width = 0;
+
+    while (*i)
+        width += glutBitmapWidth(font, *i++);
+
+    return width;
+}
+
 DECL_DRAW_VALUE_FUNC(draw_level, "Level %u", level,
                      win_w / 20, win_h - win_h / 15)
 
 DECL_DRAW_VALUE_FUNC(draw_score, "Score: %d", score,
                      win_w - win_w / 7, win_h - win_h / 15)
+
+DECL_DRAW_VALUE_FUNC(draw_lives, "Lives: %d", lives,
+                     win_w - win_w / 7, win_h - win_h / 15 - 18)
 
 static void draw_stars()
 {
@@ -76,6 +91,19 @@ static void generate_stars()
         GET_RAND_COORDS(star_coords[i].x, star_coords[i].y);
 }
 
+static void draw_game_over()
+{
+    int win_w, win_h;
+    char *str = "GAME OVER";
+    int str_width;    
+    
+    GET_WINDOW_SIZE(win_w, win_h);
+    str_width = get_str_width(GLUT_BITMAP_HELVETICA_18, str);
+    
+    draw_string(win_w / 2 - str_width / 2, win_h / 2,
+                GLUT_BITMAP_HELVETICA_18, str);
+}
+
 void display()
 {
     glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -84,11 +112,20 @@ void display()
     glMatrixMode(GL_MODELVIEW);
     
     draw_stars();
+
+    if (game_over)
+    {
+        draw_game_over();
+        goto out;
+    }
+    
     draw_ship(&ship);
     draw_asteroids(&asteroids);
     draw_score();
     draw_level();
+    draw_lives();
 
+out:
     glFlush();
 }
 
@@ -120,6 +157,7 @@ static void init_game_values()
     score = 0;
     lives = MAX_LIVES;
     level = 1;
+    game_over = 0;
 }
 
 static void init_game_objects()
@@ -140,10 +178,49 @@ void game_init()
     init_game_values();
 }
 
+static void check_collisions()
+{
+    struct asteroid *asteroid;
+    struct bullet *bullet;
+    int win_w, win_h;
+
+    GET_WINDOW_SIZE(win_w, win_h);
+
+    list_for_each_entry(asteroid, &asteroids.list, list)
+    {
+        if (check_asteroid_collision(&ship.pos.coords, asteroid))
+        {
+            init_ship(&ship, win_w / 2, win_h / 2);
+            lives--;
+            if (lives == 0)
+                game_over = 1;
+        }
+        
+        list_for_each_entry(bullet, &ship.bullet_list.list, list)
+        {
+            if (check_asteroid_collision(&bullet->pos.coords, asteroid))
+            {
+                score += 10;
+                
+                delete_bullet(&ship, bullet);
+                delete_asteroid(asteroid);
+                break;
+            }
+        }
+    }
+}
+
 void game_tick(int value)
 {
+    if (game_over)
+        goto out;
+    
     move_bullets(&ship);
+    move_asteroids(&asteroids);
 
+    check_collisions();
+
+out:
     handle_keystates();
 
     glutPostRedisplay();

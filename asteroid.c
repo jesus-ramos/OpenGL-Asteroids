@@ -43,6 +43,16 @@ int check_asteroid_collision(struct vector2d *coords, struct asteroid *asteroid)
     return distf(coords, &asteroid->pos.coords) <= asteroid->radius;
 }
 
+void move_asteroids(struct asteroid *asteroids)
+{
+    struct asteroid *tmp;
+
+    list_for_each_entry(tmp, &asteroids->list, list)
+    {
+        /* MOVE */
+    }
+}
+
 void draw_asteroids(struct asteroid *asteroids)
 {
     struct asteroid *tmp;
@@ -56,4 +66,10 @@ void init_asteroid(struct asteroid *asteroid, float x, float y)
     asteroid->pos.coords.x = x;
     asteroid->pos.coords.y = y;
     asteroid->radius = ASTEROID_RADIUS;
+}
+
+void delete_asteroid(struct asteroid *asteroid)
+{
+    list_del(&asteroid->list);
+    free(asteroid);
 }
