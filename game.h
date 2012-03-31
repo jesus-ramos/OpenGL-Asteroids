@@ -8,5 +8,6 @@ extern struct ship ship;
 void game_init();
 void game_tick(int value);
 void display();
+void game_reset();
 
 #endif /* _GAME_H */

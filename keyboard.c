@@ -26,7 +26,7 @@ void handle_keystates()
     if (key_state[' '])
         fire(&ship);
     if (key_state['r'])
-        game_init();
+        game_reset();
     
     if (spec_key_state[GLUT_KEY_LEFT] ^ spec_key_state[GLUT_KEY_RIGHT])
         rotate_ship(&ship, (spec_key_state[GLUT_KEY_LEFT]) ?

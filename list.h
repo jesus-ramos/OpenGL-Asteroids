@@ -42,6 +42,11 @@ static inline void INIT_LIST_HEAD(struct list_head *list)
     list->prev = list;
 }
 
+static inline int list_empty(struct list_head *head)
+{
+    return head->next == head;
+}
+
 #define container_of(ptr, type, member)                         \
     ({                                                          \
         const typeof(((type *)0)->member) *__mptr = (ptr);      \

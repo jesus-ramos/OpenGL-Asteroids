@@ -133,6 +133,14 @@ void delete_bullet(struct ship *ship, struct bullet *bullet)
     free(bullet);
 }
 
+void clear_bullets(struct ship *ship)
+{
+    struct bullet *bullet;
+
+    list_for_each_entry(bullet, &ship->bullet_list.list, list)
+        delete_bullet(ship, bullet);
+}
+
 void move_bullets(struct ship *ship)
 {
     struct bullet *tmp;

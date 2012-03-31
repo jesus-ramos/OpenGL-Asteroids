@@ -100,13 +100,19 @@ static void draw_game_over()
 {
     int win_w, win_h;
     char *str = "GAME OVER";
-    int str_width;    
+    char buf[32];
+    int str_width;
     
     GET_WINDOW_SIZE(win_w, win_h);
     str_width = get_str_width(GLUT_BITMAP_HELVETICA_18, str);
+    snprintf(buf, 32, "Final Score: %d", score);
     
     draw_string(win_w / 2 - str_width / 2, win_h / 2,
                 GLUT_BITMAP_HELVETICA_18, str);
+    
+    str_width = get_str_width(GLUT_BITMAP_HELVETICA_18, buf);
+    draw_string(win_w / 2 - str_width / 2, win_h / 2 + 18,
+                GLUT_BITMAP_HELVETICA_18, buf);
 }
 
 void display()
@@ -183,6 +189,13 @@ void game_init()
     init_game_values();
 }
 
+static void advance_level()
+{
+    level++;
+    generate_asteroids();
+    clear_bullets(&ship);
+}
+
 static void check_collisions()
 {
     struct asteroid *asteroid;
@@ -211,6 +224,15 @@ static void check_collisions()
                 break;
             }
     }
+
+    if (list_empty(&asteroids.list))
+        advance_level();
+}
+
+void game_reset()
+{
+    clear_bullets(&ship);
+    game_init();
 }
 
 void game_tick(int value)

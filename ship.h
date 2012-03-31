@@ -30,7 +30,9 @@ void init_ship(struct ship *ship, float x, float y);
 void fire(struct ship *ship);
 void move_ship(struct ship *ship, int direction);
 void rotate_ship(struct ship *ship, int turn_val);
+
 void move_bullets(struct ship *ship);
 void delete_bullet(struct ship *ship, struct bullet *bullet);
+void clear_bullets(struct ship *ship);
 
 #endif /* _SHIP_H */
