@@ -73,3 +73,11 @@ void delete_asteroid(struct asteroid *asteroid)
     list_del(&asteroid->list);
     free(asteroid);
 }
+
+void clear_asteroids(struct asteroid *asteroids)
+{
+    struct asteroid *asteroid, *n;
+
+    list_for_each_entry_safe(asteroid, n, &asteroids->list, list)
+        delete_asteroid(asteroid);
+}

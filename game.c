@@ -198,13 +198,13 @@ static void advance_level()
 
 static void check_collisions()
 {
-    struct asteroid *asteroid;
-    struct bullet *bullet;
+    struct asteroid *asteroid, *tmpa;
+    struct bullet *bullet, *tmpb;
     int win_w, win_h;
 
     GET_WINDOW_SIZE(win_w, win_h);
 
-    list_for_each_entry(asteroid, &asteroids.list, list)
+    list_for_each_entry_safe(asteroid, tmpa, &asteroids.list, list)
     {
         if (check_asteroid_collision(&ship.pos.coords, asteroid))
         {
@@ -214,7 +214,7 @@ static void check_collisions()
                 game_over = 1;
         }
         
-        list_for_each_entry(bullet, &ship.bullet_list.list, list)
+        list_for_each_entry_safe(bullet, tmpb, &ship.bullet_list.list, list)
             if (check_asteroid_collision(&bullet->pos.coords, asteroid))
             {
                 score += 10;
@@ -232,6 +232,7 @@ static void check_collisions()
 void game_reset()
 {
     clear_bullets(&ship);
+    clear_asteroids(&asteroids);
     game_init();
 }
 

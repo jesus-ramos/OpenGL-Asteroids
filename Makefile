@@ -11,6 +11,11 @@ LDFLAGS = -I /usr/include/GL/ -L /usr/include/GL
 endif
 RM	= rm
 
+ifdef CONFIG_DEBUG
+CFLAGS := -g
+LDFLAGS := -g
+endif
+
 TARGET 	= Asteroids
 SRCS 	= main.c ship.c asteroid.c game.c keyboard.c
 OBJS	= ${SRCS:.c=.o}
@@ -31,12 +36,14 @@ include .depend
 	$(CC) $(CFLAGS) -c $<
 
 $(TARGET) : $(OBJS)
-	$(LD) -o $@ $(OBJS) $(LDFLAGS) $(LDLIBS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
 
-TAGS :
+TAGS : FORCE
 	find . -regex ".*\.[cChH]\(pp\)?" -print | etags -
 
-.PHONY : clean
+FORCE : # force to always happen
+
+.PHONY : clean FORCE mrproper
 clean :
 	-$(RM) $(TARGET) $(OBJS)
 
