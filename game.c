@@ -13,6 +13,11 @@
 
 #define NUM_ASTEROIDS 3
 
+#define TIMER_TICK 20
+
+#define MAX_BGND_STARS 500
+#define MAX_LIVES 3
+
 #define GET_RAND_COORDS(x, y)                   \
     do {                                        \
         int width, height;                      \
@@ -197,7 +202,6 @@ static void check_collisions()
         }
         
         list_for_each_entry(bullet, &ship.bullet_list.list, list)
-        {
             if (check_asteroid_collision(&bullet->pos.coords, asteroid))
             {
                 score += 10;
@@ -206,14 +210,18 @@ static void check_collisions()
                 delete_asteroid(asteroid);
                 break;
             }
-        }
     }
 }
 
 void game_tick(int value)
 {
+    int should_redisplay = 1;
+    
     if (game_over)
+    {
+        should_redisplay = 0;
         goto out;
+    }
     
     move_bullets(&ship);
     move_asteroids(&asteroids);
@@ -223,6 +231,7 @@ void game_tick(int value)
 out:
     handle_keystates();
 
-    glutPostRedisplay();
+    if (should_redisplay)
+        glutPostRedisplay();
     glutTimerFunc(TIMER_TICK, game_tick, 0);
 }
