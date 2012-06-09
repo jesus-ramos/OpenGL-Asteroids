@@ -5,7 +5,6 @@
 #include "asteroid.h"
 #include "game.h"
 #include "glwrapper.h"
-#include "keyboard.h"
 #include "physics.h"
 #include "ship.h"
 
@@ -37,6 +36,18 @@
         draw_string(x, y, GLUT_BITMAP_HELVETICA_18, buf);       \
     }
 
+#define DECL_KEYBOARD_HANDLER(name, val)        \
+    void name(unsigned char key, int x, int y)  \
+    {                                           \
+        key_state[key] = val;                   \
+    }
+
+#define DECL_SPECIAL_HANDLER(name, val)         \
+    void name(int key, int x, int y)            \
+    {                                           \
+        spec_key_state[key] = val;              \
+    }
+
 struct ship ship;
 struct asteroid asteroids;
 struct vector2d star_coords[MAX_BGND_STARS];
@@ -46,14 +57,39 @@ unsigned int lives;
 unsigned int level;
 char game_over;
 
+char key_state[256];
+char spec_key_state[128];
+
 static void draw_string(float x, float y, void *font, char *string)
 {
     char *c;
-    
+
     glRasterPos2f(x, y);
     for (c = string; *c; c++)
         glutBitmapCharacter(font, *c);
 }
+
+static void handle_keystates()
+{
+    if (key_state['q'])
+        exit(EXIT_SUCCESS);
+    if (key_state[' '])
+        fire(&ship);
+    if (key_state['r'])
+        game_reset();
+
+    if (spec_key_state[GLUT_KEY_LEFT] ^ spec_key_state[GLUT_KEY_RIGHT])
+        rotate_ship(&ship, (spec_key_state[GLUT_KEY_LEFT]) ?
+                    TURNING_LEFT: TURNING_RIGHT);
+    if (spec_key_state[GLUT_KEY_UP] ^ spec_key_state[GLUT_KEY_DOWN])
+        move_ship(&ship, (spec_key_state[GLUT_KEY_UP]) ?
+                  MOVING_FORWARD : MOVING_BACKWARD);
+}
+
+DECL_KEYBOARD_HANDLER(handle_keyboard, 1)
+DECL_KEYBOARD_HANDLER(handle_keyboard_up, 0)
+DECL_SPECIAL_HANDLER(handle_keyboard_special, 1)
+DECL_SPECIAL_HANDLER(handle_keyboard_special_up, 0)
 
 static int get_str_width(void *font, char *str)
 {
@@ -80,7 +116,7 @@ static void draw_stars()
     int i;
 
     glPointSize(STAR_SIZE);
-    
+
     glBegin(GL_POINTS);
     glColor3f(1.0, 1.0, 1.0);
     for (i = 0; i < MAX_BGND_STARS; i++)
@@ -102,14 +138,14 @@ static void draw_game_over()
     char *str = "GAME OVER";
     char buf[32];
     int str_width;
-    
+
     GET_WINDOW_SIZE(win_w, win_h);
     str_width = get_str_width(GLUT_BITMAP_HELVETICA_18, str);
     snprintf(buf, 32, "Final Score: %d", score);
-    
+
     draw_string(win_w / 2 - str_width / 2, win_h / 2,
                 GLUT_BITMAP_HELVETICA_18, str);
-    
+
     str_width = get_str_width(GLUT_BITMAP_HELVETICA_18, buf);
     draw_string(win_w / 2 - str_width / 2, win_h / 2 + 18,
                 GLUT_BITMAP_HELVETICA_18, buf);
@@ -121,7 +157,7 @@ void display()
     glClear(GL_COLOR_BUFFER_BIT);
 
     glMatrixMode(GL_MODELVIEW);
-    
+
     draw_stars();
 
     if (game_over)
@@ -129,7 +165,7 @@ void display()
         draw_game_over();
         goto out;
     }
-    
+
     draw_ship(&ship);
     draw_asteroids(&asteroids);
     draw_score();
@@ -145,9 +181,9 @@ static void generate_asteroids()
     int i;
     float x, y;
     struct asteroid *tmp;
-        
+
     INIT_LIST_HEAD(&asteroids.list);
-    
+
     for (i = 0; i < NUM_ASTEROIDS; i++)
     {
         tmp = malloc(sizeof(struct asteroid));
@@ -156,7 +192,7 @@ static void generate_asteroids()
             printf("OOM: asteroid\n");
             exit(EXIT_FAILURE);
         }
-        
+
         GET_RAND_COORDS(x, y);
         init_asteroid(tmp, x, y);
         list_add_tail(&tmp->list, &asteroids.list);
@@ -176,7 +212,7 @@ static void init_game_objects()
     int win_w, win_h;
 
     GET_WINDOW_SIZE(win_w, win_h);
-    
+
     srand((unsigned int)time(NULL));
     init_ship(&ship, win_w / 2, win_h / 2);
     generate_asteroids();
@@ -213,12 +249,12 @@ static void check_collisions()
             if (lives == 0)
                 game_over = 1;
         }
-        
+
         list_for_each_entry_safe(bullet, tmpb, &ship.bullet_list.list, list)
             if (check_asteroid_collision(&bullet->pos.coords, asteroid))
             {
                 score += 10;
-                
+
                 delete_bullet(&ship, bullet);
                 delete_asteroid(asteroid);
                 break;
@@ -239,13 +275,13 @@ void game_reset()
 void game_tick(int value)
 {
     int should_redisplay = 1;
-    
+
     if (game_over)
     {
         should_redisplay = 0;
         goto out;
     }
-    
+
     move_bullets(&ship);
     move_asteroids(&asteroids);
 

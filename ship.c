@@ -135,8 +135,7 @@ void delete_bullet(struct ship *ship, struct bullet *bullet)
 
 void clear_bullets(struct ship *ship)
 {
-    struct bullet *bullet;
-    struct bullet *n;
+    struct bullet *bullet, *n;
 
     list_for_each_entry_safe(bullet, n, &ship->bullet_list.list, list)
         delete_bullet(ship, bullet);

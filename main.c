@@ -1,5 +1,4 @@
 #include "glwrapper.h"
-#include "keyboard.h"
 #include "game.h"
 
 int win_width = 800;

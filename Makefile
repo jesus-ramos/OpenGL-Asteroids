@@ -17,7 +17,7 @@ LDFLAGS := -g
 endif
 
 TARGET 	= Asteroids
-SRCS 	= main.c ship.c asteroid.c game.c keyboard.c
+SRCS 	= main.c ship.c asteroid.c game.c
 OBJS	= ${SRCS:.c=.o}
 
 .SUFFIXES: #clear
