@@ -20,7 +20,7 @@ TARGET 	= Asteroids
 SRCS 	= main.c ship.c asteroid.c game.c
 OBJS	= ${SRCS:.c=.o}
 
-.SUFFIXES: #clear
+.SUFFIXES:
 .SUFFIXES: .o .c
 
 all : $(TARGET)
@@ -38,14 +38,13 @@ include .depend
 $(TARGET) : $(OBJS)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
 
-TAGS : FORCE
+TAGS :
 	find . -regex ".*\.[cChH]\(pp\)?" -print | etags -
 
-FORCE : # force to always happen
-
-.PHONY : clean FORCE mrproper
 clean :
 	-$(RM) $(TARGET) $(OBJS)
 
 mrproper :
 	-$(RM) $(TARGET) $(OBJS) .depend TAGS
+
+.PHONY : clean mrproper TAGS
