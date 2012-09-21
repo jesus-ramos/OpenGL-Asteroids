@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "glwrapper.h"
 #include "list.h"
@@ -9,25 +10,20 @@
 #define MAX_BULLET_COUNT (1UL << 30)
 #define BULLET_MOVE_DIST 10
 #define BULLET_FIRE_WAIT 3
-#define BULLET_LIFETIME 100
+#define BULLET_LIFETIME  100
+#define BULLET_SIZE      1.5
 
-#define BULLET_SIZE 1.5
-
-#define SHIP_MOVE_DIST 6
-
-#define SHIP_HEIGHT 15
-#define SHIP_WIDTH 10
-
+#define SHIP_MOVE_DIST    6
+#define SHIP_HEIGHT       15
+#define SHIP_WIDTH        10
 #define SHIP_ROTATE_SPEED 10
 
 void init_ship(struct ship *ship, float x, float y)
 {
-    ship->bullet_count = 0;
+    memset(ship, 0, sizeof(struct ship));
+    
     ship->pos.coords.x = x;
     ship->pos.coords.y = y;
-    ship->pos.angle = 0;
-    ship->pos.velocity = 0;
-    ship->fire_wait = 0;
 
     INIT_LIST_HEAD(&ship->bullet_list.list);
 }
@@ -147,7 +143,7 @@ void move_bullets(struct ship *ship)
     struct bullet *n;
     int win_h, win_w;
 
-    GET_WINDOW_SIZE(win_w, win_h);
+    get_window_size(&win_w, &win_h);
     
     list_for_each_entry_safe(tmp, n, &ship->bullet_list.list, list)
     {
@@ -165,7 +161,7 @@ void move_ship(struct ship *ship, int direction)
 {
     int win_h, win_w;
 
-    GET_WINDOW_SIZE(win_w, win_h);
+    get_window_size(&win_w, &win_h);
 
     update_and_bound_pos(&ship->pos, direction * SHIP_MOVE_DIST,
                          0, win_w, 0, win_h);

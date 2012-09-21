@@ -8,44 +8,21 @@
 #include "physics.h"
 #include "ship.h"
 
-#define STAR_SIZE 1.0
-
-#define NUM_ASTEROIDS 3
-
-#define TIMER_TICK 20
-
+#define STAR_SIZE      1.0
+#define NUM_ASTEROIDS  3
+#define TIMER_TICK     20
 #define MAX_BGND_STARS 500
-#define MAX_LIVES 3
-
-#define GET_RAND_COORDS(x, y)                   \
-    do {                                        \
-        int width, height;                      \
-        GET_WINDOW_SIZE(width, height);         \
-        x = (float)(rand() % width);            \
-        y = (float)(rand() % height);           \
-    } while (0)
+#define MAX_LIVES      3
 
 #define DECL_DRAW_VALUE_FUNC(name, fmtstring, val, x, y)        \
     static void name()                                          \
     {                                                           \
         char buf[16];                                           \
         int win_h, win_w;                                       \
-        GET_WINDOW_SIZE(win_w, win_h);                          \
+        get_window_size(&win_w, &win_h);                        \
         glColor3f(1.0, 1.0, 1.0);                               \
         snprintf(buf, 16, fmtstring, val);                      \
         draw_string(x, y, GLUT_BITMAP_HELVETICA_18, buf);       \
-    }
-
-#define DECL_KEYBOARD_HANDLER(name, val)        \
-    void name(unsigned char key, int x, int y)  \
-    {                                           \
-        key_state[key] = val;                   \
-    }
-
-#define DECL_SPECIAL_HANDLER(name, val)         \
-    void name(int key, int x, int y)            \
-    {                                           \
-        spec_key_state[key] = val;              \
     }
 
 struct ship ship;
@@ -56,9 +33,19 @@ unsigned int score;
 unsigned int lives;
 unsigned int level;
 char game_over;
+char paused;
 
 char key_state[256];
 char spec_key_state[128];
+
+static inline void get_rand_coords(float *x, float *y)
+{
+    int win_w, win_h;
+
+    get_window_size(&win_w, &win_h);
+    *x = (float)(rand() % win_w);
+    *y = (float)(rand() % win_h);
+}
 
 static void draw_string(float x, float y, void *font, char *string)
 {
@@ -71,12 +58,19 @@ static void draw_string(float x, float y, void *font, char *string)
 
 static void handle_keystates()
 {
+    if (key_state['p'])
+    {
+        paused = !paused;
+        key_state['p'] = 0;
+    }
     if (key_state['q'])
         exit(EXIT_SUCCESS);
-    if (key_state[' '])
-        fire(&ship);
     if (key_state['r'])
         game_reset();
+    if (paused)
+        return;
+    if (key_state[' '])
+        fire(&ship);
 
     if (spec_key_state[GLUT_KEY_LEFT] ^ spec_key_state[GLUT_KEY_RIGHT])
         rotate_ship(&ship, (spec_key_state[GLUT_KEY_LEFT]) ?
@@ -86,10 +80,25 @@ static void handle_keystates()
                   MOVING_FORWARD : MOVING_BACKWARD);
 }
 
-DECL_KEYBOARD_HANDLER(handle_keyboard, 1)
-DECL_KEYBOARD_HANDLER(handle_keyboard_up, 0)
-DECL_SPECIAL_HANDLER(handle_keyboard_special, 1)
-DECL_SPECIAL_HANDLER(handle_keyboard_special_up, 0)
+void handle_keyboard(unsigned char key, int x, int y)
+{
+    key_state[key] = 1;
+}
+
+void handle_keyboard_up(unsigned char key, int x, int y)
+{
+    key_state[key] = 0;
+}
+
+void handle_keyboard_special(int key, int x, int y)
+{
+    spec_key_state[key] = 1;
+}
+
+void handle_keyboard_special_up(int key, int x, int y)
+{
+    spec_key_state[key] = 0;
+}
 
 static int get_str_width(void *font, char *str)
 {
@@ -129,7 +138,7 @@ static void generate_stars()
     int i;
 
     for (i = 0; i < MAX_BGND_STARS; i++)
-        GET_RAND_COORDS(star_coords[i].x, star_coords[i].y);
+        get_rand_coords(&star_coords[i].x, &star_coords[i].y);
 }
 
 static void draw_game_over()
@@ -139,7 +148,7 @@ static void draw_game_over()
     char buf[32];
     int str_width;
 
-    GET_WINDOW_SIZE(win_w, win_h);
+    get_window_size(&win_w, &win_h);
     str_width = get_str_width(GLUT_BITMAP_HELVETICA_18, str);
     snprintf(buf, 32, "Final Score: %d", score);
 
@@ -149,6 +158,18 @@ static void draw_game_over()
     str_width = get_str_width(GLUT_BITMAP_HELVETICA_18, buf);
     draw_string(win_w / 2 - str_width / 2, win_h / 2 + 18,
                 GLUT_BITMAP_HELVETICA_18, buf);
+}
+
+static void draw_pause_screen()
+{
+    int win_w, win_h;
+    char *str = "PAUSED";
+    int str_width;
+
+    get_window_size(&win_w, &win_h);
+    str_width = get_str_width(GLUT_BITMAP_HELVETICA_18, str);
+    draw_string(win_w / 2 - str_width / 2, win_h / 2,
+                GLUT_BITMAP_HELVETICA_18, str);
 }
 
 void display()
@@ -171,7 +192,8 @@ void display()
     draw_score();
     draw_level();
     draw_lives();
-
+    if (paused)
+        draw_pause_screen();
 out:
     glFlush();
 }
@@ -193,7 +215,7 @@ static void generate_asteroids()
             exit(EXIT_FAILURE);
         }
 
-        GET_RAND_COORDS(x, y);
+        get_rand_coords(&x, &y);
         init_asteroid(tmp, x, y);
         list_add_tail(&tmp->list, &asteroids.list);
     }
@@ -205,13 +227,14 @@ static void init_game_values()
     lives = MAX_LIVES;
     level = 1;
     game_over = 0;
+    paused = 0;
 }
 
 static void init_game_objects()
 {
     int win_w, win_h;
 
-    GET_WINDOW_SIZE(win_w, win_h);
+    get_window_size(&win_w, &win_h);
 
     srand((unsigned int)time(NULL));
     init_ship(&ship, win_w / 2, win_h / 2);
@@ -238,16 +261,18 @@ static void check_collisions()
     struct bullet *bullet, *tmpb;
     int win_w, win_h;
 
-    GET_WINDOW_SIZE(win_w, win_h);
-
     list_for_each_entry_safe(asteroid, tmpa, &asteroids.list, list)
     {
         if (check_asteroid_collision(&ship.pos.coords, asteroid))
         {
+            get_window_size(&win_w, &win_h);
             init_ship(&ship, win_w / 2, win_h / 2);
             lives--;
-            if (lives == 0)
+            if (!lives)
+            {
                 game_over = 1;
+                return;
+            }
         }
 
         list_for_each_entry_safe(bullet, tmpb, &ship.bullet_list.list, list)
@@ -274,23 +299,14 @@ void game_reset()
 
 void game_tick(int value)
 {
-    int should_redisplay = 1;
-
-    if (game_over)
-    {
-        should_redisplay = 0;
+    if (game_over || paused)
         goto out;
-    }
 
     move_bullets(&ship);
     move_asteroids(&asteroids);
-
     check_collisions();
-
 out:
     handle_keystates();
-
-    if (should_redisplay)
-        glutPostRedisplay();
+    glutPostRedisplay();
     glutTimerFunc(TIMER_TICK, game_tick, 0);
 }

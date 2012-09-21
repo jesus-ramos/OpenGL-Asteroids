@@ -1,42 +1,43 @@
+#include <stdlib.h>
+
 #include "asteroid.h"
 #include "glwrapper.h"
 #include "list.h"
 
 #define ASTEROID_ROTATE_SPEED 10
+#define NUM_CIRCLE_POINTS     1000
+#define ASTEROID_RADIUS       100
 
-#define NUM_CIRCLE_POINTS 1000
+static void draw_circle_loop(float radius, int num_points, struct vector2d *coords)
+{
+    int i;
+    float x, y;
+    float angle;
 
-#define ASTEROID_RADIUS 100
-
-#define DRAW_CIRCLE_LOOP                                \
-    do {                                                \
-        for (i = 0; i < num_points; i++)                \
-        {                                               \
-            angle = i * (2.0 * M_PI / num_points);      \
-            x = coords->x + cosf(angle) * radius;       \
-            y = coords->y + sinf(angle) * radius;       \
-            glVertex2f(x, y);                           \
-        }                                               \
-        glVertex2f(coords->x + radius, coords->y);      \
-    } while (0)
-
+    for (i = 0; i < num_points; i++)
+    {
+        angle = i * (2.0f * M_PI / num_points);
+        x = coords->x + cosf(angle) * radius;
+        y = coords->y + sinf(angle) * radius;
+        glVertex2f(x, y);
+    }
+    glVertex2f(coords->x + radius, coords->y);
+}
 
 static void draw_circle(float radius, int num_points, struct vector2d *coords)
 {
-    int i;
-    float angle;
-    float x, y;
-
     glColor3f(0.0, 0.0, 0.0);
     glBegin(GL_POLYGON);
-    DRAW_CIRCLE_LOOP;
+    draw_circle_loop(radius, num_points, coords);
     glEnd();
     
     glColor3f(1.0, 1.0, 1.0);
     glBegin(GL_LINE_STRIP);
-    DRAW_CIRCLE_LOOP;
+    draw_circle_loop(radius, num_points, coords);
     glEnd();
 }
+
+#undef DRAW_CIRCLE_LOOP
 
 int check_asteroid_collision(struct vector2d *coords, struct asteroid *asteroid)
 {

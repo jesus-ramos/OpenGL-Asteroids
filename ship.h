@@ -4,11 +4,10 @@
 #include "physics.h"
 #include "list.h"
 
-#define MOVING_FORWARD 1
+#define MOVING_FORWARD  1
 #define MOVING_BACKWARD -1
-
-#define TURNING_LEFT -1
-#define TURNING_RIGHT 1
+#define TURNING_LEFT    -1
+#define TURNING_RIGHT   1
 
 struct bullet
 {

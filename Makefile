@@ -6,7 +6,7 @@ ifeq ($(UNAME),Darwin)
 LDLIBS 	= -framework GLUT -framework OpenGL -lobjc -lm
 LDFLAGS =
 else
-LDLIBS 	= -lglut -lGL -lGLU -lX11 -lXmu -lXi -lm
+LDLIBS 	= -lglut -lGL -lGLU
 LDFLAGS = -I /usr/include/GL/ -L /usr/include/GL
 endif
 RM	= rm
@@ -19,18 +19,19 @@ endif
 TARGET 	= Asteroids
 SRCS 	= main.c ship.c asteroid.c game.c
 OBJS	= ${SRCS:.c=.o}
+DEPS	= ${SRCS:.c=.d}
 
 .SUFFIXES:
 .SUFFIXES: .o .c
 
 all : $(TARGET)
 
-depend : .depend
+%.d : %.c
+	@$(CC) -M $(CFLAGS) $< > $@.$$$$;			\
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; 	\
+	rm -f $@.$$$$
 
-.depend : $(SRCS)
-	$(CC) $(CFLAGS) -MM $^ > .depend
-
-include .depend
+-include $(DEPS)
 
 .c.o :
 	$(CC) $(CFLAGS) -c $<
@@ -42,9 +43,6 @@ TAGS :
 	find . -regex ".*\.[cChH]\(pp\)?" -print | etags -
 
 clean :
-	-$(RM) $(TARGET) $(OBJS)
+	-$(RM) $(TARGET) $(OBJS) $(DEPS) TAGS
 
-mrproper :
-	-$(RM) $(TARGET) $(OBJS) .depend TAGS
-
-.PHONY : clean mrproper TAGS
+.PHONY : clean TAGS

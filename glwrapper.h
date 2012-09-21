@@ -7,10 +7,10 @@
 #include <GL/glut.h>
 #endif /* __APPLE__ */
 
-#define GET_WINDOW_SIZE(width, height)          \
-    do {                                        \
-        width = glutGet(GLUT_WINDOW_WIDTH);     \
-        height = glutGet(GLUT_WINDOW_HEIGHT);   \
-    } while (0)
+static inline void get_window_size(int *width, int *height)
+{
+    *width = glutGet(GLUT_WINDOW_WIDTH);
+    *height = glutGet(GLUT_WINDOW_HEIGHT);
+}
 
 #endif /* _GLWRAPPER_H */
