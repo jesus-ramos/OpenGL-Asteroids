@@ -37,8 +37,6 @@ static void draw_circle(float radius, int num_points, struct vector2d *coords)
     glEnd();
 }
 
-#undef DRAW_CIRCLE_LOOP
-
 int check_asteroid_collision(struct vector2d *coords, struct asteroid *asteroid)
 {
     return distf(coords, &asteroid->pos.coords) <= asteroid->radius;
