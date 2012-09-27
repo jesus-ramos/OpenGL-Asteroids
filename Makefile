@@ -6,7 +6,7 @@ ifeq ($(UNAME),Darwin)
 LDLIBS 	= -framework GLUT -framework OpenGL -lobjc -lm
 LDFLAGS =
 else
-LDLIBS 	= -lglut -lGL -lGLU
+LDLIBS 	= -lglut -lGL -lGLU -lm
 LDFLAGS = -I /usr/include/GL/ -L /usr/include/GL
 endif
 RM	= rm
