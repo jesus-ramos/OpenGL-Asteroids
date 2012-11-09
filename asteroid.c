@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "asteroid.h"
 #include "glwrapper.h"
@@ -6,7 +7,37 @@
 
 #define ASTEROID_ROTATE_SPEED 10
 #define NUM_CIRCLE_POINTS     1000
-#define ASTEROID_RADIUS       100
+#define ASTEROID_RADIUS       20
+
+struct vector2d* generatePoints(float centerX, float centerY, float radius, int numPoints)
+{
+    srand((unsigned int)time(NULL));
+    struct vector2d* points = malloc(sizeof(struct vector2d) * numPoints);
+    float x, y, angle;
+    float bound = radius * 2;
+    int i, diff;
+    angle = 0;
+    for (i = 0; i < numPoints; i++)
+    {
+	x = 0;
+	y = 0;
+	
+	diff = rand() % (int)bound;
+
+	angle = (i + 1) * (2.0f * M_PI / numPoints);
+	x = centerX + cosf(angle) * (radius + diff);
+	y = centerY + sinf(angle) * (radius + diff);
+
+	struct vector2d * pt = (struct vector2d*) malloc(sizeof(struct vector2d));
+
+	pt->x = x;
+	pt->y = y;
+
+	points[i] = *pt;
+    }
+	
+    return points;
+}
 
 static void draw_circle_loop(float radius, int num_points, struct vector2d *coords)
 {
@@ -22,6 +53,30 @@ static void draw_circle_loop(float radius, int num_points, struct vector2d *coor
         glVertex2f(x, y);
     }
     glVertex2f(coords->x + radius, coords->y);
+}
+
+void draw_polygon(int numPoints, struct vector2d * points)
+{
+    int i;
+    for(i = 0; i < numPoints; i++)
+	glVertex2f(points[i].x, points[i].y);
+    glVertex2f(points[0].x, points[0].y);
+}
+
+static void draw_asteroid(float radius,  struct vector2d *coords, int numPoints, struct vector2d* points)
+{
+
+    //draw inner asteroid
+    glColor3f(0.0, 0.0, 0.0);
+    glBegin(GL_POLYGON);
+    draw_polygon(numPoints, points);
+    glEnd();
+
+    //draw outline
+    glColor3f(1.0, 1.0, 1.0);
+    glBegin(GL_LINE_STRIP);
+    draw_polygon(numPoints, points);
+    glEnd();
 }
 
 static void draw_circle(float radius, int num_points, struct vector2d *coords)
@@ -55,13 +110,19 @@ void move_asteroids(struct asteroid *asteroids)
 void draw_asteroids(struct asteroid *asteroids)
 {
     struct asteroid *tmp;
-
+    
     list_for_each_entry(tmp, &asteroids->list, list)
-        draw_circle(tmp->radius, NUM_CIRCLE_POINTS, &tmp->pos.coords);
+	draw_asteroid(tmp->radius, &tmp->pos.coords, tmp->numPoints, tmp->points);
 }
 
 void init_asteroid(struct asteroid *asteroid, float x, float y)
 {
+    int numPoints = rand() % 11 + 5;
+
+    struct vector2d* points = generatePoints(x, y, ASTEROID_RADIUS, numPoints);
+
+    asteroid->numPoints = numPoints;
+    asteroid->points = points;
     asteroid->pos.coords.x = x;
     asteroid->pos.coords.y = y;
     asteroid->radius = ASTEROID_RADIUS;

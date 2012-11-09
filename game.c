@@ -9,7 +9,7 @@
 #include "ship.h"
 
 #define STAR_SIZE      1.0
-#define NUM_ASTEROIDS  3
+#define NUM_ASTEROIDS  5
 #define TIMER_TICK     20
 #define MAX_BGND_STARS 500
 #define MAX_LIVES      3
@@ -217,6 +217,7 @@ static void generate_asteroids()
 
         get_rand_coords(&x, &y);
         init_asteroid(tmp, x, y);
+
         list_add_tail(&tmp->list, &asteroids.list);
     }
 }
@@ -237,8 +238,8 @@ static void init_game_objects()
     get_window_size(&win_w, &win_h);
 
     srand((unsigned int)time(NULL));
-    init_ship(&ship, win_w / 2, win_h / 2);
-    generate_asteroids();
+    init_ship(&ship, win_w / 2, win_h / 2); 
+    generate_asteroids(); 
     generate_stars();
 }
 
@@ -304,7 +305,7 @@ void game_tick(int value)
 
     move_bullets(&ship);
     move_asteroids(&asteroids);
-    check_collisions();
+//    check_collisions();
 out:
     handle_keystates();
     glutPostRedisplay();
