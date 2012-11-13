@@ -55,4 +55,16 @@ static inline float distf(struct vector2d *p1, struct vector2d *p2)
     return sqrtf(SQUARE(p2->x - p1->x) + SQUARE(p2->y - p1->y));
 }
 
+//magic
+static inline int pnpoly(int numVerts, struct vector2d* poly, struct vector2d* point)
+{
+    int i, j, c = 0;
+    for (i = 0, j = numVerts-1; i < numVerts; j = i++) {
+	if (((poly[i].y > point->y) != (poly[j].y > point->y)) &&
+	    (point->x < (poly[j].x - poly[i].x) * (point->y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x))
+	    c = !c;
+    }
+    return c;
+}
+
 #endif /* _PHYSICS_H */

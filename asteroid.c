@@ -11,7 +11,6 @@
 
 struct vector2d* generatePoints(float centerX, float centerY, float radius, int numPoints)
 {
-    srand((unsigned int)time(NULL));
     struct vector2d* points = malloc(sizeof(struct vector2d) * numPoints);
     float x, y, angle;
     float bound = radius * 2;
@@ -55,27 +54,31 @@ static void draw_circle_loop(float radius, int num_points, struct vector2d *coor
     glVertex2f(coords->x + radius, coords->y);
 }
 
-void draw_polygon(int numPoints, struct vector2d * points)
+void draw_polygon(struct vector2d* center, int numPoints, struct vector2d* points, int mode)
 {
     int i;
+    if(mode == GL_TRIANGLE_FAN)
+	glVertex2f(center->x, center->y);
+
     for(i = 0; i < numPoints; i++)
-	glVertex2f(points[i].x, points[i].y);
+	glVertex2f(points[i].x, points[i].y); 
+    
     glVertex2f(points[0].x, points[0].y);
 }
 
-static void draw_asteroid(float radius,  struct vector2d *coords, int numPoints, struct vector2d* points)
+static void draw_asteroid(struct vector2d* center, int numPoints, struct vector2d* points)
 {
 
     //draw inner asteroid
     glColor3f(0.0, 0.0, 0.0);
-    glBegin(GL_POLYGON);
-    draw_polygon(numPoints, points);
+    glBegin(GL_TRIANGLE_FAN);
+    draw_polygon(center, numPoints, points, GL_TRIANGLE_FAN);
     glEnd();
 
     //draw outline
     glColor3f(1.0, 1.0, 1.0);
     glBegin(GL_LINE_STRIP);
-    draw_polygon(numPoints, points);
+    draw_polygon(center, numPoints, points, GL_LINE_STRIP);
     glEnd();
 }
 
@@ -94,8 +97,12 @@ static void draw_circle(float radius, int num_points, struct vector2d *coords)
 
 int check_asteroid_collision(struct vector2d *coords, struct asteroid *asteroid)
 {
-    return distf(coords, &asteroid->pos.coords) <= asteroid->radius;
+    int collided = 0;
+    // return distf(coords, &asteroid->pos.coords) <= asteroid->radius;
+    
+    return collided;
 }
+
 
 void move_asteroids(struct asteroid *asteroids)
 {
@@ -112,7 +119,7 @@ void draw_asteroids(struct asteroid *asteroids)
     struct asteroid *tmp;
     
     list_for_each_entry(tmp, &asteroids->list, list)
-	draw_asteroid(tmp->radius, &tmp->pos.coords, tmp->numPoints, tmp->points);
+	draw_asteroid(&(tmp->pos.coords), tmp->numPoints, tmp->points);
 }
 
 void init_asteroid(struct asteroid *asteroid, float x, float y)
