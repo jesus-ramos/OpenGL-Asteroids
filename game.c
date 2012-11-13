@@ -305,7 +305,7 @@ void game_tick(int value)
 
     move_bullets(&ship);
     move_asteroids(&asteroids);
-//    check_collisions();
+    check_collisions();
 out:
     handle_keystates();
     glutPostRedisplay();

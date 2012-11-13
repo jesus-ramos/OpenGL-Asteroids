@@ -38,22 +38,6 @@ struct vector2d* generatePoints(float centerX, float centerY, float radius, int 
     return points;
 }
 
-static void draw_circle_loop(float radius, int num_points, struct vector2d *coords)
-{
-    int i;
-    float x, y;
-    float angle;
-
-    for (i = 0; i < num_points; i++)
-    {
-        angle = i * (2.0f * M_PI / num_points);
-        x = coords->x + cosf(angle) * radius;
-        y = coords->y + sinf(angle) * radius;
-        glVertex2f(x, y);
-    }
-    glVertex2f(coords->x + radius, coords->y);
-}
-
 void draw_polygon(struct vector2d* center, int numPoints, struct vector2d* points, int mode)
 {
     int i;
@@ -82,27 +66,12 @@ static void draw_asteroid(struct vector2d* center, int numPoints, struct vector2
     glEnd();
 }
 
-static void draw_circle(float radius, int num_points, struct vector2d *coords)
-{
-    glColor3f(0.0, 0.0, 0.0);
-    glBegin(GL_POLYGON);
-    draw_circle_loop(radius, num_points, coords);
-    glEnd();
-    
-    glColor3f(1.0, 1.0, 1.0);
-    glBegin(GL_LINE_STRIP);
-    draw_circle_loop(radius, num_points, coords);
-    glEnd();
-}
-
 int check_asteroid_collision(struct vector2d *coords, struct asteroid *asteroid)
 {
     int collided = 0;
-    // return distf(coords, &asteroid->pos.coords) <= asteroid->radius;
-    
+    collided = pnpoly(asteroid->numPoints, asteroid->points, coords);
     return collided;
 }
-
 
 void move_asteroids(struct asteroid *asteroids)
 {
