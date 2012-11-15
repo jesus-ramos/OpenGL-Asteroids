@@ -14,8 +14,6 @@
 #define BULLET_SIZE      1.5
 
 #define SHIP_MOVE_DIST    6
-#define SHIP_HEIGHT       15
-#define SHIP_WIDTH        10
 #define SHIP_ROTATE_SPEED 10
 
 void init_ship(struct ship *ship, float x, float y)
@@ -81,12 +79,7 @@ static void draw_bullets(struct bullet *bullet_list)
 void draw_ship(struct ship *ship)
 {
     int i;
-    struct vector2d ship_coords[] =
-        {
-            {ship->pos.coords.x, ship->pos.coords.y + SHIP_HEIGHT},
-            {ship->pos.coords.x - SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT},
-            {ship->pos.coords.x + SHIP_WIDTH, ship->pos.coords.y - SHIP_HEIGHT}
-        };
+    SHIP_COORDS(ship);
 
     glMatrixMode(GL_MODELVIEW);
     

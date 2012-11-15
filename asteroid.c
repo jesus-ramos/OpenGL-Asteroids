@@ -52,9 +52,10 @@ void draw_polygon(struct vector2d* center, int numPoints, struct vector2d* point
 
 static void draw_asteroid(struct vector2d* center, int numPoints, struct vector2d* points)
 {
+    glMatrixMode(GL_MODELVIEW);
 
     //draw inner asteroid
-    glColor3f(0.0, 0.0, 0.0);
+    glColor3f(0.0, 1.0, 0.0);
     glBegin(GL_TRIANGLE_FAN);
     draw_polygon(center, numPoints, points, GL_TRIANGLE_FAN);
     glEnd();
@@ -64,6 +65,7 @@ static void draw_asteroid(struct vector2d* center, int numPoints, struct vector2
     glBegin(GL_LINE_STRIP);
     draw_polygon(center, numPoints, points, GL_LINE_STRIP);
     glEnd();
+
 }
 
 int check_asteroid_collision(struct vector2d *coords, struct asteroid *asteroid)
@@ -76,10 +78,24 @@ int check_asteroid_collision(struct vector2d *coords, struct asteroid *asteroid)
 void move_asteroids(struct asteroid *asteroids)
 {
     struct asteroid *tmp;
+    int win_h, win_w, bounded;
+    int i, j, past;
+
+    get_window_size(&win_w, &win_h);
 
     list_for_each_entry(tmp, &asteroids->list, list)
     {
         /* MOVE */
+	bounded = update_and_bound_pos(&tmp->pos, tmp->pos.velocity,
+				       0, win_w, 0, win_h);
+	for(i = 0; i < tmp->numPoints; i++)
+	{
+	    tmp->points[i].x += tmp->pos.velocity * sinf(tmp->pos.angle);
+	    tmp->points[i].y += tmp->pos.velocity * cosf(tmp->pos.angle);
+	}	
+
+	for(i = 0; i < tmp->numPoints; i++)
+	    bound_position(&tmp->points[i], 0, win_w, 0, win_h);
     }
 }
 
@@ -88,19 +104,23 @@ void draw_asteroids(struct asteroid *asteroids)
     struct asteroid *tmp;
     
     list_for_each_entry(tmp, &asteroids->list, list)
-	draw_asteroid(&(tmp->pos.coords), tmp->numPoints, tmp->points);
+	draw_asteroid(&tmp->pos.coords, tmp->numPoints, tmp->points);
 }
 
 void init_asteroid(struct asteroid *asteroid, float x, float y)
 {
     int numPoints = rand() % 11 + 5;
-
+    float vel = rand() % 3 + 1;
+    float velAngle  = rand() % 360;
+//    printf("Asteroid velocity {%f, %f degrees}\n", vel, velAngle);
     struct vector2d* points = generatePoints(x, y, ASTEROID_RADIUS, numPoints);
 
     asteroid->numPoints = numPoints;
     asteroid->points = points;
     asteroid->pos.coords.x = x;
     asteroid->pos.coords.y = y;
+    asteroid->pos.velocity = vel;
+    asteroid->pos.angle = DEG_TO_RAD(velAngle);
     asteroid->radius = ASTEROID_RADIUS;
 }
 

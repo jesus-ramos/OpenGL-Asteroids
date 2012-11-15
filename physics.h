@@ -35,19 +35,30 @@ static inline float bound_float(float val, float min_val, float max_val)
     return val;
 }
 
-static inline void bound_position(struct vector2d *coords, float min_x, float max_x,
+static inline int  bound_position(struct vector2d *coords, float min_x, float max_x,
                                   float min_y, float max_y)
 {
-    coords->x = bound_float(coords->x, min_x, max_x);
-    coords->y = bound_float(coords->y, min_y, max_y);
+    float x, y, bounded;
+
+    x = bound_float(coords->x, min_x, max_x);
+    y = bound_float(coords->y, min_y, max_y);
+    bounded = coords->x != x || coords->y != y;
+
+    coords->x = x;
+    coords->y = y;
+
+    return bounded;
 }
 
-static inline void update_and_bound_pos(struct position_info *pos, float dist,
+static inline int update_and_bound_pos(struct position_info *pos, float dist,
                                         float min_x, float max_x,
                                         float min_y, float max_y)
 {
+    int bounded;
     update_position(pos, dist);
-    bound_position(&pos->coords, min_x, max_x, min_y, max_y);
+    bounded = bound_position(&pos->coords, min_x, max_x, min_y, max_y);
+
+    return bounded;
 }
 
 static inline float distf(struct vector2d *p1, struct vector2d *p2)
