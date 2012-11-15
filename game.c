@@ -9,7 +9,7 @@
 #include "ship.h"
 
 #define STAR_SIZE      1.0
-#define NUM_ASTEROIDS  1
+#define NUM_ASTEROIDS  5
 #define TIMER_TICK     20
 #define MAX_BGND_STARS 500
 #define MAX_LIVES      3

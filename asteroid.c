@@ -55,7 +55,7 @@ static void draw_asteroid(struct vector2d* center, int numPoints, struct vector2
     glMatrixMode(GL_MODELVIEW);
 
     //draw inner asteroid
-    glColor3f(0.0, 1.0, 0.0);
+    glColor3f(0.0, 0.0, 0.0);
     glBegin(GL_TRIANGLE_FAN);
     draw_polygon(center, numPoints, points, GL_TRIANGLE_FAN);
     glEnd();
@@ -79,23 +79,39 @@ void move_asteroids(struct asteroid *asteroids)
 {
     struct asteroid *tmp;
     int win_h, win_w, bounded;
-    int i, j, past;
+    int i, inbounds;
 
     get_window_size(&win_w, &win_h);
 
     list_for_each_entry(tmp, &asteroids->list, list)
     {
         /* MOVE */
-	bounded = update_and_bound_pos(&tmp->pos, tmp->pos.velocity,
-				       0, win_w, 0, win_h);
+	
 	for(i = 0; i < tmp->numPoints; i++)
 	{
 	    tmp->points[i].x += tmp->pos.velocity * sinf(tmp->pos.angle);
 	    tmp->points[i].y += tmp->pos.velocity * cosf(tmp->pos.angle);
 	}	
 
+	update_position(&tmp->pos, tmp->pos.velocity);
+
+	inbounds = 0;
 	for(i = 0; i < tmp->numPoints; i++)
-	    bound_position(&tmp->points[i], 0, win_w, 0, win_h);
+	{
+	    struct vector2d point = tmp->points[i];
+	    if((point.x >= 0 && point.x <= win_w) && 
+	       (point.y >= 0 && point.y <= win_h))
+	    {
+		inbounds = 1;
+	    }
+	}
+	if(!inbounds)
+	{
+	    for(i = 0; i < tmp->numPoints; i++)
+		bound_position(&tmp->points[i], 0, win_w, 0, win_h);
+	    bound_position(&tmp->pos.coords, 0, win_w, 0, win_h);
+	}
+
     }
 }
 
