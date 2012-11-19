@@ -27,12 +27,10 @@ struct vector2d* generatePoints(float centerX, float centerY, float radius, int 
 	x = centerX + cosf(angle) * (radius + diff);
 	y = centerY + sinf(angle) * (radius + diff);
 
-	struct vector2d * pt = (struct vector2d*) malloc(sizeof(struct vector2d));
+//	struct vector2d * pt = (struct vector2d*) malloc(sizeof(struct vector2d));
 
-	pt->x = x;
-	pt->y = y;
-
-	points[i] = *pt;
+	points[i].x = x;
+	points[i].y = y;
     }
 	
     return points;
@@ -142,7 +140,9 @@ void init_asteroid(struct asteroid *asteroid, float x, float y)
 
 void delete_asteroid(struct asteroid *asteroid)
 {
+    int i;
     list_del(&asteroid->list);
+    free(asteroid->points);
     free(asteroid);
 }
 
