@@ -12,6 +12,13 @@
 #define SHIP_HEIGHT       15
 #define SHIP_WIDTH        10
 
+static int blink = 0;
+enum ShipStatus
+{
+    NORMAL,
+    INVINCIBLE
+};
+
 struct bullet
 {
     struct position_info pos;
@@ -23,8 +30,11 @@ struct ship
 {
     struct position_info pos;
     struct bullet bullet_list;
+    enum ShipStatus status;
+    int invincible;
     int bullet_count;
     int fire_wait;
+    float shield_radius;
 };
 
 #define SHIP_COORDS(ship)						\
@@ -37,7 +47,7 @@ struct ship
 
 
 void draw_ship(struct ship *ship);
-void init_ship(struct ship *ship, float x, float y);
+void init_ship(struct ship *ship, float x, float y, float sRad);
 void fire(struct ship *ship);
 void move_ship(struct ship *ship, int direction);
 void rotate_ship(struct ship *ship, int turn_val);

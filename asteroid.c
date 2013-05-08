@@ -6,7 +6,6 @@
 #include "list.h"
 
 #define ASTEROID_ROTATE_SPEED 10
-#define NUM_CIRCLE_POINTS     1000
 #define ASTEROID_RADIUS       20
 
 struct vector2d* generatePoints(float centerX, float centerY, float radius, int numPoints)
@@ -20,19 +19,17 @@ struct vector2d* generatePoints(float centerX, float centerY, float radius, int 
     {
 	x = 0;
 	y = 0;
-	
+
 	diff = rand() % (int)bound;
 
 	angle = (i + 1) * (2.0f * M_PI / numPoints);
 	x = centerX + cosf(angle) * (radius + diff);
 	y = centerY + sinf(angle) * (radius + diff);
 
-//	struct vector2d * pt = (struct vector2d*) malloc(sizeof(struct vector2d));
-
 	points[i].x = x;
 	points[i].y = y;
     }
-	
+
     return points;
 }
 
@@ -43,8 +40,8 @@ void draw_polygon(struct vector2d* center, int numPoints, struct vector2d* point
 	glVertex2f(center->x, center->y);
 
     for(i = 0; i < numPoints; i++)
-	glVertex2f(points[i].x, points[i].y); 
-    
+	glVertex2f(points[i].x, points[i].y);
+
     glVertex2f(points[0].x, points[0].y);
 }
 
@@ -76,7 +73,7 @@ int check_asteroid_collision(struct vector2d *coords, struct asteroid *asteroid)
 void move_asteroids(struct asteroid *asteroids)
 {
     struct asteroid *tmp;
-    int win_h, win_w, bounded;
+    int win_h, win_w;
     int i, inbounds;
 
     get_window_size(&win_w, &win_h);
@@ -84,12 +81,12 @@ void move_asteroids(struct asteroid *asteroids)
     list_for_each_entry(tmp, &asteroids->list, list)
     {
         /* MOVE */
-	
+
 	for(i = 0; i < tmp->numPoints; i++)
 	{
 	    tmp->points[i].x += tmp->pos.velocity * sinf(tmp->pos.angle);
 	    tmp->points[i].y += tmp->pos.velocity * cosf(tmp->pos.angle);
-	}	
+	}
 
 	update_position(&tmp->pos, tmp->pos.velocity);
 
@@ -97,7 +94,7 @@ void move_asteroids(struct asteroid *asteroids)
 	for(i = 0; i < tmp->numPoints; i++)
 	{
 	    struct vector2d point = tmp->points[i];
-	    if((point.x >= 0 && point.x <= win_w) && 
+	    if((point.x >= 0 && point.x <= win_w) &&
 	       (point.y >= 0 && point.y <= win_h))
 	    {
 		inbounds = 1;
@@ -116,7 +113,7 @@ void move_asteroids(struct asteroid *asteroids)
 void draw_asteroids(struct asteroid *asteroids)
 {
     struct asteroid *tmp;
-    
+
     list_for_each_entry(tmp, &asteroids->list, list)
 	draw_asteroid(&tmp->pos.coords, tmp->numPoints, tmp->points);
 }
@@ -126,7 +123,6 @@ void init_asteroid(struct asteroid *asteroid, float x, float y)
     int numPoints = rand() % 11 + 5;
     float vel = rand() % 3 + 1;
     float velAngle  = rand() % 360;
-//    printf("Asteroid velocity {%f, %f degrees}\n", vel, velAngle);
     struct vector2d* points = generatePoints(x, y, ASTEROID_RADIUS, numPoints);
 
     asteroid->numPoints = numPoints;
@@ -140,7 +136,6 @@ void init_asteroid(struct asteroid *asteroid, float x, float y)
 
 void delete_asteroid(struct asteroid *asteroid)
 {
-    int i;
     list_del(&asteroid->list);
     free(asteroid->points);
     free(asteroid);
