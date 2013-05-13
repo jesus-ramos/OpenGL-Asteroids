@@ -10,7 +10,7 @@ struct asteroid
     struct list_head list;
     float angular_speed;
     float radius;
-    int numPoints;
+    int num_points;
     struct vector2d *points;
 };
 

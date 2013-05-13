@@ -16,23 +16,23 @@
 #define SHIP_MOVE_DIST    6
 #define SHIP_ROTATE_SPEED 10
 
-void init_ship(struct ship *ship, float x, float y, float sRad)
+void init_ship(struct ship *ship, float x, float y, float shield_radius)
 {
-    memset(ship, 0, sizeof(struct ship));
+    ship->pos.coords.x  = x;
+    ship->pos.coords.y  = y;
+    ship->shield_radius = shield_radius;
+    ship->invincible    = 0;
+    ship->status        = NORMAL;
+    ship->blink         = 0;
 
-    ship->pos.coords.x = x;
-    ship->pos.coords.y = y;
-    ship->shield_radius = sRad;
-    ship->invincible = 0;
-    ship->status = NORMAL;
     INIT_LIST_HEAD(&ship->bullet_list.list);
 }
 
 static void init_bullet(struct bullet *bullet, struct ship *ship)
 {
     bullet->pos.coords = ship->pos.coords;
-    bullet->pos.angle = ship->pos.angle;
-    bullet->life = 0;
+    bullet->pos.angle  = ship->pos.angle;
+    bullet->life       = 0;
 
     update_position(&bullet->pos, SHIP_HEIGHT);
 }
@@ -78,31 +78,6 @@ static void draw_bullets(struct bullet *bullet_list)
     glEnd();
 }
 
-
-static void draw_circle_loop(float radius, int num_points, struct vector2d *coords)
-{
-    int i;
-    float x, y;
-    float angle;
-
-    for (i = 0; i < num_points; i++)
-    {
-        angle = i * (2.0f * M_PI / num_points);
-        x = coords->x + cosf(angle) * radius;
-        y = coords->y + sinf(angle) * radius;
-        glVertex2f(x, y);
-    }
-    glVertex2f(coords->x + radius, coords->y);
-}
-
-static void draw_circle(float radius, int num_points, struct vector2d *coords)
-{
-    glColor3f(0.0, 1.0, 1.0);
-    glBegin(GL_LINE_STRIP);
-    draw_circle_loop(radius, num_points, coords);
-    glEnd();
-}
-
 void draw_ship(struct ship *ship)
 {
     int i;
@@ -125,17 +100,17 @@ void draw_ship(struct ship *ship)
     /* Ship outline */
     switch(ship->status)
     {
-	case NORMAL:
-	    glColor3f(1.0, 1.0, 1.0); break;
-	case INVINCIBLE:
-	{
-	    if(blink)
-		glColor3f(0.0, 1.0, 1.0);
-	    else
-		glColor3f(1.0, 1.0, 1.0);
-	    blink = !blink;
-	    break;
-	}
+        case NORMAL:
+            glColor3f(1.0, 1.0, 1.0); break;
+        case INVINCIBLE:
+        {
+            if(ship->blink)
+                glColor3f(0.0, 1.0, 1.0);
+            else
+                glColor3f(1.0, 1.0, 1.0);
+            ship->blink = !ship->blink;
+            break;
+        }
     }
 
     glBegin(GL_LINES);
@@ -146,8 +121,6 @@ void draw_ship(struct ship *ship)
     }
     glEnd();
     glPopMatrix();
-
-//    draw_circle(ship->shield_radius*2, NUM_CIRCLE_POINTS, &ship->pos.coords);
 
     draw_bullets(&ship->bullet_list);
 }
@@ -201,4 +174,3 @@ void move_ship(struct ship *ship, int direction)
     update_and_bound_pos(&ship->pos, direction * SHIP_MOVE_DIST,
                          0, win_w, 0, win_h);
 }
-

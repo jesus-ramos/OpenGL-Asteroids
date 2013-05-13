@@ -11,7 +11,7 @@ int main(int argc, char **argv)
     glutInitWindowSize(win_width, win_height);
     glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - win_width) / 2,
                            (glutGet(GLUT_SCREEN_HEIGHT) - win_height) / 2);
-                           
+
     glutCreateWindow("Asteroids");
 
     glutDisplayFunc(display);
@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
 
     game_init();
-    
+
     glutMainLoop();
 
     return 0;

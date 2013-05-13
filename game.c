@@ -65,7 +65,7 @@ static void handle_keystates()
         key_state['p'] = 0;
     }
     if (key_state['q'])
-        exit(EXIT_SUCCESS);
+        glutLeaveMainLoop();
     if (key_state['r'])
         game_reset();
     if (paused)
@@ -216,7 +216,7 @@ static void generate_asteroids()
             exit(EXIT_FAILURE);
         }
 
-	get_rand_coords(&x, &y);
+        get_rand_coords(&x, &y);
         init_asteroid(tmp, x, y);
         list_add_tail(&tmp->list, &asteroids.list);
     }
@@ -252,7 +252,7 @@ void game_init()
 static void advance_level()
 {
     if(++level % 5 == 0)
-	lives++;
+        lives++;
     generate_asteroids();
     clear_bullets(&ship);
 }
@@ -267,29 +267,28 @@ static void check_collisions()
 
     list_for_each_entry_safe(asteroid, tmpa, &asteroids.list, list)
     {
-	if(ship.invincible == 0)
-	{
-	    if(ship.status != NORMAL)
-		ship.status = NORMAL;
-	    for (i = 0; i < 3; i++)
-	    {
-		if (check_asteroid_collision(&ship_coords[i], asteroid))
-		{
-		    get_window_size(&win_w, &win_h);
-		    init_ship(&ship, win_w / 2, win_h / 2, DEFAULT_SRADIUS);
-		    ship.invincible = 250;
-		    ship.status = INVINCIBLE;
-		    printf("HIT!\n");
-		    if (!--lives)
-		    {
-			game_over = 1;
-			return;
-		    }
-		}
-	    }
-	}
-	else
-	    ship.invincible--;
+        if(ship.invincible == 0)
+        {
+            if(ship.status != NORMAL)
+                ship.status = NORMAL;
+            for (i = 0; i < 3; i++)
+            {
+                if (check_asteroid_collision(&ship_coords[i], asteroid))
+                {
+                    get_window_size(&win_w, &win_h);
+                    init_ship(&ship, win_w / 2, win_h / 2, DEFAULT_SRADIUS);
+                    ship.invincible = 250;
+                    ship.status = INVINCIBLE;
+                    if (!--lives)
+                    {
+                        game_over = 1;
+                        return;
+                    }
+                }
+            }
+        }
+        else
+            ship.invincible--;
 
         list_for_each_entry_safe(bullet, tmpb, &ship.bullet_list.list, list)
             if(check_asteroid_collision(&bullet->pos.coords, asteroid))

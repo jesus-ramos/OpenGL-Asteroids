@@ -8,44 +8,57 @@
 #define ASTEROID_ROTATE_SPEED 10
 #define ASTEROID_RADIUS       20
 
-struct vector2d* generatePoints(float centerX, float centerY, float radius, int numPoints)
+struct vector2d* generate_points(float cx, float cy, float radius,
+                                 int num_points)
 {
-    struct vector2d* points = malloc(sizeof(struct vector2d) * numPoints);
+    struct vector2d* points;
     float x, y, angle;
-    float bound = radius * 2;
+    int bound;
     int i, diff;
+
+    bound = radius * 2;
     angle = 0;
-    for (i = 0; i < numPoints; i++)
+    points = malloc(sizeof(struct vector2d) * num_points);
+    if (!points)
     {
-	x = 0;
-	y = 0;
+        printf("OOM: points in generate_points()\n");
+        exit(1);
+    }
 
-	diff = rand() % (int)bound;
+    for (i = 0; i < num_points; i++)
+    {
+        x = 0;
+        y = 0;
 
-	angle = (i + 1) * (2.0f * M_PI / numPoints);
-	x = centerX + cosf(angle) * (radius + diff);
-	y = centerY + sinf(angle) * (radius + diff);
+        diff = rand() % bound;
 
-	points[i].x = x;
-	points[i].y = y;
+        angle = (i + 1) * (2.0f * M_PI / num_points);
+        x = cx + cosf(angle) * (radius + diff);
+        y = cy + sinf(angle) * (radius + diff);
+
+        points[i].x = x;
+        points[i].y = y;
     }
 
     return points;
 }
 
-void draw_polygon(struct vector2d* center, int numPoints, struct vector2d* points, int mode)
+void draw_polygon(struct vector2d* center, int numPoints,
+                  struct vector2d* points, int mode)
 {
     int i;
+
     if(mode == GL_TRIANGLE_FAN)
-	glVertex2f(center->x, center->y);
+        glVertex2f(center->x, center->y);
 
     for(i = 0; i < numPoints; i++)
-	glVertex2f(points[i].x, points[i].y);
+        glVertex2f(points[i].x, points[i].y);
 
     glVertex2f(points[0].x, points[0].y);
 }
 
-static void draw_asteroid(struct vector2d* center, int numPoints, struct vector2d* points)
+static void draw_asteroid(struct vector2d* center, int numPoints,
+                          struct vector2d* points)
 {
     glMatrixMode(GL_MODELVIEW);
 
@@ -65,47 +78,43 @@ static void draw_asteroid(struct vector2d* center, int numPoints, struct vector2
 
 int check_asteroid_collision(struct vector2d *coords, struct asteroid *asteroid)
 {
-    int collided = 0;
-    collided = pnpoly(asteroid->numPoints, asteroid->points, coords);
-    return collided;
+    return point_in_polygon(asteroid->num_points, asteroid->points, coords);
 }
 
 void move_asteroids(struct asteroid *asteroids)
 {
-    struct asteroid *tmp;
     int win_h, win_w;
     int i, inbounds;
+    struct asteroid *tmp;
+    struct vector2d *point;
 
     get_window_size(&win_w, &win_h);
 
     list_for_each_entry(tmp, &asteroids->list, list)
     {
-        /* MOVE */
+        for(i = 0; i < tmp->num_points; i++)
+        {
+            tmp->points[i].x += tmp->pos.velocity * sinf(tmp->pos.angle);
+            tmp->points[i].y += tmp->pos.velocity * cosf(tmp->pos.angle);
+        }
 
-	for(i = 0; i < tmp->numPoints; i++)
-	{
-	    tmp->points[i].x += tmp->pos.velocity * sinf(tmp->pos.angle);
-	    tmp->points[i].y += tmp->pos.velocity * cosf(tmp->pos.angle);
-	}
+        update_position(&tmp->pos, tmp->pos.velocity);
 
-	update_position(&tmp->pos, tmp->pos.velocity);
+        inbounds = 0;
+        for(i = 0; i < tmp->num_points; i++)
+        {
+            point = &tmp->points[i];
+            if((point->x >= 0 && point->x <= win_w) &&
+               (point->y >= 0 && point->y <= win_h))
+                inbounds = 1;
+        }
 
-	inbounds = 0;
-	for(i = 0; i < tmp->numPoints; i++)
-	{
-	    struct vector2d point = tmp->points[i];
-	    if((point.x >= 0 && point.x <= win_w) &&
-	       (point.y >= 0 && point.y <= win_h))
-	    {
-		inbounds = 1;
-	    }
-	}
-	if(!inbounds)
-	{
-	    for(i = 0; i < tmp->numPoints; i++)
-		bound_position(&tmp->points[i], 0, win_w, 0, win_h);
-	    bound_position(&tmp->pos.coords, 0, win_w, 0, win_h);
-	}
+        if(!inbounds)
+        {
+            for(i = 0; i < tmp->num_points; i++)
+                bound_position(&tmp->points[i], 0, win_w, 0, win_h);
+            bound_position(&tmp->pos.coords, 0, win_w, 0, win_h);
+        }
 
     }
 }
@@ -115,23 +124,19 @@ void draw_asteroids(struct asteroid *asteroids)
     struct asteroid *tmp;
 
     list_for_each_entry(tmp, &asteroids->list, list)
-	draw_asteroid(&tmp->pos.coords, tmp->numPoints, tmp->points);
+        draw_asteroid(&tmp->pos.coords, tmp->num_points, tmp->points);
 }
 
 void init_asteroid(struct asteroid *asteroid, float x, float y)
 {
-    int numPoints = rand() % 11 + 5;
-    float vel = rand() % 3 + 1;
-    float velAngle  = rand() % 360;
-    struct vector2d* points = generatePoints(x, y, ASTEROID_RADIUS, numPoints);
-
-    asteroid->numPoints = numPoints;
-    asteroid->points = points;
+    asteroid->num_points   = rand() % 11 + 5;
+    asteroid->points       = generate_points(x, y, ASTEROID_RADIUS,
+                                             asteroid->num_points);
     asteroid->pos.coords.x = x;
     asteroid->pos.coords.y = y;
-    asteroid->pos.velocity = vel;
-    asteroid->pos.angle = DEG_TO_RAD(velAngle);
-    asteroid->radius = ASTEROID_RADIUS;
+    asteroid->pos.velocity = rand() % 3 + 1;
+    asteroid->pos.angle    = DEG_TO_RAD(rand() % 360);
+    asteroid->radius       = ASTEROID_RADIUS;
 }
 
 void delete_asteroid(struct asteroid *asteroid)
