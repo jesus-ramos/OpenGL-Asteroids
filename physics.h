@@ -26,6 +26,7 @@ static inline void update_position(struct position_info *pos, float dist)
     pos->coords.y += dist * cosf(pos->angle);
 }
 
+//convert given value to one that is within the given range
 static inline float bound_float(float val, float min_val, float max_val)
 {
     if (val < min_val)
@@ -35,24 +36,51 @@ static inline float bound_float(float val, float min_val, float max_val)
     return val;
 }
 
-static inline void bound_position(struct vector2d *coords, float min_x, float max_x,
+static inline int bound_position(struct vector2d *coords, float min_x, float max_x,
                                   float min_y, float max_y)
 {
-    coords->x = bound_float(coords->x, min_x, max_x);
-    coords->y = bound_float(coords->y, min_y, max_y);
+    float x, y, bounded;
+
+    x = bound_float(coords->x, min_x, max_x);
+    y = bound_float(coords->y, min_y, max_y);
+    bounded = coords->x != x || coords->y != y;
+
+    coords->x = x;
+    coords->y = y;
+
+    return bounded;
 }
 
-static inline void update_and_bound_pos(struct position_info *pos, float dist,
+static inline int update_and_bound_pos(struct position_info *pos, float dist,
                                         float min_x, float max_x,
                                         float min_y, float max_y)
 {
+    int bounded;
     update_position(pos, dist);
-    bound_position(&pos->coords, min_x, max_x, min_y, max_y);
+    bounded = bound_position(&pos->coords, min_x, max_x, min_y, max_y);
+
+    return bounded;
 }
 
 static inline float distf(struct vector2d *p1, struct vector2d *p2)
 {
     return sqrtf(SQUARE(p2->x - p1->x) + SQUARE(p2->y - p1->y));
+}
+static inline float distpts(int x1, int y1, int x2, int y2)
+{
+    return sqrtf(SQUARE(x2 - x1) + SQUARE(y2 - y1));
+}
+
+//magic
+static inline int pnpoly(int numVerts, struct vector2d* poly, struct vector2d* point)
+{
+    int i, j, c = 0;
+    for (i = 0, j = numVerts-1; i < numVerts; j = i++) {
+	if (((poly[i].y > point->y) != (poly[j].y > point->y)) &&
+	    (point->x < (poly[j].x - poly[i].x) * (point->y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x))
+	    c = !c;
+    }
+    return c;
 }
 
 #endif /* _PHYSICS_H */

@@ -9,10 +9,11 @@
 #include "ship.h"
 
 #define STAR_SIZE      1.0
-#define NUM_ASTEROIDS  3
+#define NUM_ASTEROIDS  5
 #define TIMER_TICK     20
 #define MAX_BGND_STARS 500
 #define MAX_LIVES      3
+#define DEFAULT_SRADIUS 20
 
 #define DECL_DRAW_VALUE_FUNC(name, fmtstring, val, x, y)        \
     static void name()                                          \
@@ -215,7 +216,7 @@ static void generate_asteroids()
             exit(EXIT_FAILURE);
         }
 
-        get_rand_coords(&x, &y);
+	get_rand_coords(&x, &y);
         init_asteroid(tmp, x, y);
         list_add_tail(&tmp->list, &asteroids.list);
     }
@@ -237,7 +238,7 @@ static void init_game_objects()
     get_window_size(&win_w, &win_h);
 
     srand((unsigned int)time(NULL));
-    init_ship(&ship, win_w / 2, win_h / 2);
+    init_ship(&ship, win_w / 2, win_h / 2, DEFAULT_SRADIUS);
     generate_asteroids();
     generate_stars();
 }
@@ -250,33 +251,48 @@ void game_init()
 
 static void advance_level()
 {
-    level++;
+    if(++level % 5 == 0)
+	lives++;
     generate_asteroids();
     clear_bullets(&ship);
 }
 
 static void check_collisions()
 {
+    int win_w, win_h;
+    int i;
     struct asteroid *asteroid, *tmpa;
     struct bullet *bullet, *tmpb;
-    int win_w, win_h;
+    SHIP_COORDS((&ship));
 
     list_for_each_entry_safe(asteroid, tmpa, &asteroids.list, list)
     {
-        if (check_asteroid_collision(&ship.pos.coords, asteroid))
-        {
-            get_window_size(&win_w, &win_h);
-            init_ship(&ship, win_w / 2, win_h / 2);
-            lives--;
-            if (!lives)
-            {
-                game_over = 1;
-                return;
-            }
-        }
+	if(ship.invincible == 0)
+	{
+	    if(ship.status != NORMAL)
+		ship.status = NORMAL;
+	    for (i = 0; i < 3; i++)
+	    {
+		if (check_asteroid_collision(&ship_coords[i], asteroid))
+		{
+		    get_window_size(&win_w, &win_h);
+		    init_ship(&ship, win_w / 2, win_h / 2, DEFAULT_SRADIUS);
+		    ship.invincible = 250;
+		    ship.status = INVINCIBLE;
+		    printf("HIT!\n");
+		    if (!--lives)
+		    {
+			game_over = 1;
+			return;
+		    }
+		}
+	    }
+	}
+	else
+	    ship.invincible--;
 
         list_for_each_entry_safe(bullet, tmpb, &ship.bullet_list.list, list)
-            if (check_asteroid_collision(&bullet->pos.coords, asteroid))
+            if(check_asteroid_collision(&bullet->pos.coords, asteroid))
             {
                 score += 10;
 

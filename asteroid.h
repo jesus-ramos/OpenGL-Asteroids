@@ -10,6 +10,8 @@ struct asteroid
     struct list_head list;
     float angular_speed;
     float radius;
+    int numPoints;
+    struct vector2d *points;
 };
 
 void draw_asteroids(struct asteroid *asteroids);
