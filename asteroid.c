@@ -43,7 +43,7 @@ struct vector2d* generate_points(float cx, float cy, float radius,
     return points;
 }
 
-void draw_polygon(struct vector2d* center, int numPoints,
+void draw_polygon(struct vector2d* center, int num_points,
                   struct vector2d* points, int mode)
 {
     int i;
@@ -51,13 +51,13 @@ void draw_polygon(struct vector2d* center, int numPoints,
     if(mode == GL_TRIANGLE_FAN)
         glVertex2f(center->x, center->y);
 
-    for(i = 0; i < numPoints; i++)
+    for(i = 0; i < num_points; i++)
         glVertex2f(points[i].x, points[i].y);
 
     glVertex2f(points[0].x, points[0].y);
 }
 
-static void draw_asteroid(struct vector2d* center, int numPoints,
+static void draw_asteroid(struct vector2d* center, int num_points,
                           struct vector2d* points)
 {
     glMatrixMode(GL_MODELVIEW);
@@ -65,13 +65,13 @@ static void draw_asteroid(struct vector2d* center, int numPoints,
     //draw inner asteroid
     glColor3f(0.0, 0.0, 0.0);
     glBegin(GL_TRIANGLE_FAN);
-    draw_polygon(center, numPoints, points, GL_TRIANGLE_FAN);
+    draw_polygon(center, num_points, points, GL_TRIANGLE_FAN);
     glEnd();
 
     //draw outline
     glColor3f(1.0, 1.0, 1.0);
     glBegin(GL_LINE_STRIP);
-    draw_polygon(center, numPoints, points, GL_LINE_STRIP);
+    draw_polygon(center, num_points, points, GL_LINE_STRIP);
     glEnd();
 
 }
