@@ -2,13 +2,8 @@ UNAME	= $(shell uname -s)
 CC	= gcc
 CFLAGS	= -Wall
 LD	= $(CC)
-ifeq ($(UNAME),Darwin)
-LDLIBS	= -framework GLUT -framework OpenGL -lobjc -lm
-LDFLAGS =
-else
 LDLIBS	= -lglut -lGL -lGLU -lm
 LDFLAGS = -I /usr/include/GL/ -L /usr/include/GL
-endif
 RM	= rm
 
 ifdef CONFIG_DEBUG
