@@ -11,6 +11,9 @@ CFLAGS := -g
 LDFLAGS := -g
 endif
 
+DOC_CFG = doxygen.config
+DOCSDIR	= docs
+
 BINDIR	= bin
 DEPSDIR = deps
 MKDIRS	= $(CURDIR)/{$(BINDIR),$(DEPSDIR)}
@@ -42,9 +45,12 @@ $(TARGET) : $(OBJS)
 TAGS :
 	find . -regex ".*\.[cChH]\(pp\)?" -print | etags -
 
+docs:
+	doxygen $(DOC_CFG)
+
 clean :
-	-$(RM) -r $(BINDIR) $(DEPSDIR) $(TARGET)
+	-$(RM) -r $(BINDIR) $(DEPSDIR) $(TARGET) $(DOCSDIR)
 
 -include $(DEPS)
 
-.PHONY : clean TAGS
+.PHONY : clean TAGS docs

@@ -18,22 +18,28 @@ enum ship_status
     INVINCIBLE
 };
 
+/**
+ * @brief Bullets that the ship fires
+ */
 struct bullet
 {
-    struct position_info pos;
-    struct list_head list;
-    int life;
+    struct position_info pos; /**< Position of the bullet */
+    struct list_head list;    /**< List of bullets that the ship has fired */
+    int life;                 /**< Amount of time the bullet has left before it disappears */
 };
 
+/**
+ * @brief Main ship structure for the game
+ */
 struct ship
 {
-    struct position_info pos;
-    struct bullet bullet_list;
-    enum ship_status status;
+    struct position_info pos;     /**< Position of the ship */
+    struct list_head bullet_list; /**< Bullets the ship has fired */
+    enum ship_status status;      /**< Current status of the ship */
     int invincible;
-    int bullet_count;
-    int fire_wait;
-    float shield_radius;
+    int bullet_count;             /**< Number of bullets alive */
+    int fire_wait;                /**< Bullet firing delay */
+    float shield_radius;          /**< Radius of the ships shield */
     int blink;
 };
 

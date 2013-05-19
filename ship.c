@@ -25,7 +25,7 @@ void init_ship(struct ship *ship, float x, float y, float shield_radius)
     ship->status        = NORMAL;
     ship->blink         = 0;
 
-    INIT_LIST_HEAD(&ship->bullet_list.list);
+    INIT_LIST_HEAD(&ship->bullet_list);
 }
 
 static void init_bullet(struct bullet *bullet, struct ship *ship)
@@ -59,13 +59,13 @@ void fire(struct ship *ship)
     }
     init_bullet(new_bullet, ship);
 
-    list_add_tail(&new_bullet->list, &ship->bullet_list.list);
+    list_add_tail(&new_bullet->list, &ship->bullet_list);
 
     ship->bullet_count++;
     ship->fire_wait = 1;
 }
 
-static void draw_bullets(struct bullet *bullet_list)
+static void draw_bullets(struct list_head *bullet_list)
 {
     struct bullet *tmp;
 
@@ -73,7 +73,7 @@ static void draw_bullets(struct bullet *bullet_list)
 
     glBegin(GL_POINTS);
     glColor3f(1.0, 0.0, 0.0);
-    list_for_each_entry(tmp, &bullet_list->list, list)
+    list_for_each_entry(tmp, bullet_list, list)
         glVertex2f(tmp->pos.coords.x, tmp->pos.coords.y);
     glEnd();
 }
@@ -141,7 +141,7 @@ void clear_bullets(struct ship *ship)
 {
     struct bullet *bullet, *n;
 
-    list_for_each_entry_safe(bullet, n, &ship->bullet_list.list, list)
+    list_for_each_entry_safe(bullet, n, &ship->bullet_list, list)
         delete_bullet(ship, bullet);
 }
 
@@ -153,7 +153,7 @@ void move_bullets(struct ship *ship)
 
     get_window_size(&win_w, &win_h);
 
-    list_for_each_entry_safe(tmp, n, &ship->bullet_list.list, list)
+    list_for_each_entry_safe(tmp, n, &ship->bullet_list, list)
     {
         if (++tmp->life == BULLET_LIFETIME)
         {

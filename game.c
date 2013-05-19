@@ -290,7 +290,7 @@ static void check_collisions()
         else
             ship.invincible--;
 
-        list_for_each_entry_safe(bullet, tmpb, &ship.bullet_list.list, list)
+        list_for_each_entry_safe(bullet, tmpb, &ship.bullet_list, list)
             if(check_asteroid_collision(&bullet->pos.coords, asteroid))
             {
                 score += 10;

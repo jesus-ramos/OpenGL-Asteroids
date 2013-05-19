@@ -4,14 +4,19 @@
 #include "list.h"
 #include "physics.h"
 
+/**
+ * @brief Structure that maintains asteroid position and speed
+ */
 struct asteroid
 {
-    struct position_info pos;
-    struct list_head list;
-    float angular_speed;
-    float radius;
-    int num_points;
-    struct vector2d *points;
+    struct position_info pos; /**< Coordinate of the asteroid */
+    struct list_head list;    /**< List of asteroids currently on the screen */
+    float angular_speed;      /**< Angular speed (rotation) of the asteroid */
+    float radius;             /**< Asteroid radius */
+    int num_points;           /**< Number of points that make up the asteroid */
+                              /**< polygon */
+    struct vector2d *points;  /**< Array of points that make up the asteroid */
+                              /**< polygon */
 };
 
 void draw_asteroids(struct asteroid *asteroids);
